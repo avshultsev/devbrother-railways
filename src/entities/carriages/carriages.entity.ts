@@ -1,5 +1,13 @@
-import { Column, Entity, ManyToOne, OneToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { Employee } from '../employees/employees.entity';
+import { Seat } from '../seats/seats.entity';
 import { Train } from '../trains/trains.entity';
 
 enum CarriageTypeEnum {}
@@ -10,8 +18,11 @@ export class Carriage {
   number: number;
 
   @PrimaryColumn()
-  @ManyToOne(() => Train, (train) => train.number)
+  @ManyToOne(() => Train, (train) => train.carriages)
   train: number;
+
+  @OneToMany(() => Seat, (seat) => seat.carriage)
+  seats: Seat[];
 
   @Column()
   type: CarriageTypeEnum;

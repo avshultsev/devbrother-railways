@@ -1,4 +1,11 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Employee } from '../employees/employees.entity';
 import { Seat } from '../seats/seats.entity';
 import { Station } from '../stations/stations.entity';
 
@@ -27,4 +34,7 @@ export class Ticket {
 
   @Column()
   arrivalPoint: Station;
+
+  @ManyToOne(() => Employee, (employee) => employee.tickets)
+  owner: Employee;
 }
