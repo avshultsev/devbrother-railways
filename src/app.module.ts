@@ -4,12 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { StationsModule } from './stations/stations.module';
-<<<<<<< HEAD
-import { RoutesModule } from './routes/routes.module';
-import { RouteDetailsModule } from './route-details/route-details.module';
-=======
 import { UsersModule } from './users/users.module';
->>>>>>> 2f1107b8579b50c8854a595c7ee8edf332b7605e
 
 @Module({
   imports: [
@@ -25,12 +20,7 @@ import { UsersModule } from './users/users.module';
       autoLoadEntities: true,
       synchronize: true, // should not be set in production, see: https://docs.nestjs.com/techniques/database#typeorm-integration
     }),
-<<<<<<< HEAD
-    RoutesModule,
-    RouteDetailsModule,
-=======
     UsersModule,
->>>>>>> 2f1107b8579b50c8854a595c7ee8edf332b7605e
   ],
   controllers: [AppController],
   providers: [AppService],

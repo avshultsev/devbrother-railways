@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignUpDto } from './dto/sign-up.dto';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { PostgresErrorCodes } from './postgres-error.enum';
 import { User } from 'src/users/user.entity';
 import { JwtService } from '@nestjs/jwt';
