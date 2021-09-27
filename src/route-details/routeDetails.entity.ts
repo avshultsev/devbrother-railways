@@ -1,17 +1,29 @@
-import { Column, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Route } from '../routes/routes.entity';
 import { Station } from '../stations/stations.entity';
 
+@Entity()
 export class RouteDetail {
-  @PrimaryColumn()
-  routeID: Route;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  @PrimaryColumn()
+  @ManyToOne(() => Route, { eager: true })
+  @JoinColumn()
+  route: Route;
+
+  @ManyToOne(() => Station, { eager: true })
+  @JoinColumn()
   wayStation: Station;
 
-  @PrimaryColumn()
+  @Column()
   stationOrder: number;
 
-  @Column()
+  @Column({ type: 'time without time zone' })
   time: Date;
 }
