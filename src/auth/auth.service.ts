@@ -1,4 +1,62 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { UsersService } from 'src/users/users.service';
+import { SignUpDto } from './dto/sign-up.dto';
+import bcrypt from 'bcrypt';
+import { PostgresErrorCodes } from './postgres-error.enum';
+import { User } from 'src/users/user.entity';
+import { JwtService } from '@nestjs/jwt';
+import { JwtExpires } from './jwt-constants';
+import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
-export class AuthService {}
+export class AuthService {
+  constructor(
+    private userService: UsersService,
+    private jwtService: JwtService,
+  ) {}
+
+  async signUp(signUpData: SignUpDto): Promise<User> {
+    const passwordHash = await bcrypt.hash(signUpData.password, 10);
+    try {
+      const user = await this.userService.createUser({
+        ...signUpData,
+        password: passwordHash,
+      });
+      return user;
+    } catch (err) {
+      if (err.code === PostgresErrorCodes.NAME_COLLISION) {
+        throw new BadRequestException('User with such email already exists!');
+      }
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async signIn(email: string, plainPassword: string): Promise<User> {
+    try {
+      const user = await this.userService.getByEmail(email);
+      const isCorrect = await bcrypt.compare(plainPassword, user.password);
+      if (!isCorrect)
+        throw new BadRequestException('Email or password are not valid!');
+      return user;
+    } catch (err) {
+      throw new BadRequestException('Email or password are not valid!');
+    }
+  }
+
+  getCookie(user: User) {
+    const { id, email } = user;
+    const payload: JwtPayload = { id, email };
+    const token = this.jwtService.sign(payload);
+    const cookie = `Authentication=${token}; Max-Age=${JwtExpires}; Path=/; HttpOnly`;
+    return cookie;
+  }
+
+  getLogoutCookie() {
+    const logOutCookie = 'Authentication=; Max-Age=0; Path=/; HttpOnly';
+    return logOutCookie;
+  }
+}
