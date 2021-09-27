@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignUpDto } from './dto/sign-up.dto';
-import bcrypt from 'bcryptjs';
+import * as bcryptjs from 'bcryptjs';
 import { PostgresErrorCodes } from './postgres-error.enum';
 import { User } from 'src/users/user.entity';
 import { JwtService } from '@nestjs/jwt';
@@ -20,7 +20,7 @@ export class AuthService {
   ) {}
 
   async signUp(signUpData: SignUpDto): Promise<User> {
-    const passwordHash = await bcrypt.hash(signUpData.password, 10);
+    const passwordHash = await bcryptjs.hash(signUpData.password, 10);
     try {
       const user = await this.userService.createUser({
         ...signUpData,
@@ -38,7 +38,7 @@ export class AuthService {
   async signIn(email: string, plainPassword: string): Promise<User> {
     try {
       const user = await this.userService.getByEmail(email);
-      const isCorrect = await bcrypt.compare(plainPassword, user.password);
+      const isCorrect = await bcryptjs.compare(plainPassword, user.password);
       if (!isCorrect)
         throw new BadRequestException('Email or password are not valid!');
       return user;

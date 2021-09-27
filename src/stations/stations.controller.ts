@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateStationDto } from './dto/create-station.dto';
 import { Station } from './stations.entity';
 import { StationsService } from './stations.service';
@@ -15,6 +17,7 @@ import { StationsService } from './stations.service';
 export class StationsController {
   constructor(private stationsService: StationsService) {}
 
+  // @UseGuards(JwtAuthGuard) // for endpoint test purposes only
   @Get()
   getAllStations(@Query('title') title: string): Promise<Station[]> {
     if (title) return this.stationsService.getStationsWithFilter(title);
