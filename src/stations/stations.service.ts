@@ -27,4 +27,10 @@ export class StationsService {
     await this.stationsRepository.save(newStation);
     return newStation;
   }
+
+  async deleteStation(id: string): Promise<void> {
+    const { affected } = await this.stationsRepository.delete(id);
+    if (!affected)
+      throw new NotFoundException(`Station with "${id}" id not found!`);
+  }
 }

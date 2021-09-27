@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateStationDto } from './dto/create-station.dto';
 import { Station } from './stations.entity';
 import { StationsService } from './stations.service';
@@ -21,5 +29,10 @@ export class StationsController {
   @Post()
   createStation(@Body() station: CreateStationDto) {
     return this.stationsService.createStation(station);
+  }
+
+  @Delete('/:id')
+  deleteStation(@Param('id') id: string) {
+    return this.stationsService.deleteStation(id);
   }
 }

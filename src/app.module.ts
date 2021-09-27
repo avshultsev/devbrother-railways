@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { StationsModule } from './stations/stations.module';
+import { RoutesModule } from './routes/routes.module';
+import { RouteDetailsModule } from './route-details/route-details.module';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { StationsModule } from './stations/stations.module';
       autoLoadEntities: true,
       synchronize: true, // should not be set in production, see: https://docs.nestjs.com/techniques/database#typeorm-integration
     }),
+    RoutesModule,
+    RouteDetailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
