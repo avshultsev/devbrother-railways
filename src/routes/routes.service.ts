@@ -8,9 +8,7 @@ export class RoutesService {
   constructor(private routesRepository: RoutesRepository) {}
 
   getRouteById(id: string): Promise<Route> {
-    return this.routesRepository.findOne(id, {
-      relations: ['departurePoint', 'arrivalPoint'],
-    });
+    return this.routesRepository.findOne(id);
   }
 
   getRoutesByStation(stationTitle: string): Promise<Route[]> {

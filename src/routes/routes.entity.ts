@@ -6,11 +6,11 @@ export class Route {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Station)
+  @ManyToOne(() => Station, { eager: true })
   @JoinColumn()
   departurePoint: Station;
 
-  @ManyToOne(() => Station)
+  @ManyToOne(() => Station, { eager: true })
   @JoinColumn()
   arrivalPoint: Station;
 }
