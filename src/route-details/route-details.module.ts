@@ -9,5 +9,6 @@ import { RouteDetailsService } from './route-details.service';
   imports: [TypeOrmModule.forFeature([RouteDetailsRepository]), StationsModule],
   controllers: [RouteDetailsController],
   providers: [RouteDetailsService],
+  exports: [RouteDetailsService],
 })
 export class RouteDetailsModule {}

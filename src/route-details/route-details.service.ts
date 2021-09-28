@@ -21,6 +21,10 @@ export class RouteDetailsService {
     return this.routeDetailsRepository.find({ where: { route: routeID } });
   }
 
+  getRoutesByWayStation(stationTitle: string) {
+    return this.routeDetailsRepository.findRouteByWayStation(stationTitle);
+  }
+
   async addWayStation(
     route: Route,
     wayStationData: CreateWayStationDto,
