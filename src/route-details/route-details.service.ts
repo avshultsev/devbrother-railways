@@ -1,7 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Route } from 'src/routes/routes.entity';
 import { StationsService } from 'src/stations/stations.service';
 import { CreateWayStationDto } from './dto/create-waystation.dto';
+import { UpdateWayStationDto } from './dto/update-waystation.dto';
 import { RouteDetailsRepository } from './route-details.repository';
 import { RouteDetail } from './routeDetails.entity';
 
@@ -32,5 +37,36 @@ export class RouteDetailsService {
     });
     await this.routeDetailsRepository.save(newRouteDetail);
     return newRouteDetail;
+  }
+
+  async updateWayStation(
+    route: Route,
+    stationOrder: number,
+    body: UpdateWayStationDto,
+  ): Promise<void> {
+    const wayStation = await this.stationService.getStationByName(
+      body.wayStation,
+    );
+    if (!wayStation)
+      throw new BadRequestException(`${wayStation} station does not exist!`);
+    const { affected } = await this.routeDetailsRepository.update(
+      { route, stationOrder },
+      { ...body, wayStation },
+    );
+    if (!affected)
+      throw new NotFoundException(
+        `Way station #${stationOrder} for route ${route} not found!`,
+      );
+  }
+
+  async deleteWayStation(route: Route, stationOrder: number) {
+    const { affected } = await this.routeDetailsRepository.delete({
+      route,
+      stationOrder,
+    });
+    if (!affected)
+      throw new NotFoundException(
+        `Way station #${stationOrder} for route ${route} not found!`,
+      );
   }
 }
