@@ -4,19 +4,15 @@ import { Route } from './routes.entity';
 @EntityRepository(Route)
 export class RoutesRepository extends Repository<Route> {
   async findByStation(title: string): Promise<Route[]> {
-    const ids = await this.createQueryBuilder('route')
-      .leftJoinAndSelect(
+    return this.createQueryBuilder()
+      .select('route.id')
+      .from(Route, 'route')
+      .innerJoin(
         'station',
         'station',
-        '(route.departurePoint = station.id) OR (route.arrivalPoint = station.id)',
+        'station.id = route."departurePointId" OR station.id = route."arrivalPointId"',
       )
-      .where('LOWER(station.title) LIKE LOWER(:title)', {
-        title: `%${title}%`,
-      })
+      .where('station.title = :title', { title })
       .getMany();
-
-    return this.findByIds(ids, {
-      relations: ['departurePoint', 'arrivalPoint'],
-    });
   }
 }

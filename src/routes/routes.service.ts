@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { RouteDetailsService } from 'src/route-details/route-details.service';
 import { StationsService } from 'src/stations/stations.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { Route } from './routes.entity';
@@ -13,14 +14,19 @@ export class RoutesService {
   constructor(
     private routesRepository: RoutesRepository,
     private stationService: StationsService,
+    private routeDetailsService: RouteDetailsService,
   ) {}
 
   getRouteById(id: string): Promise<Route> {
     return this.routesRepository.findOne(id);
   }
 
-  getRoutesByStation(stationTitle: string): Promise<Route[]> {
-    return this.routesRepository.findByStation(stationTitle);
+  async getRoutesByStation(stationTitle: string): Promise<Route[]> {
+    const [wayStationRoutes, edgeStationRoutes] = await Promise.all([
+      this.routeDetailsService.getRoutesByWayStation(stationTitle),
+      this.routesRepository.findByStation(stationTitle),
+    ]);
+    return [...wayStationRoutes, ...edgeStationRoutes];
   }
 
   async createRoute(createRouteData: CreateRouteDto): Promise<Route> {
