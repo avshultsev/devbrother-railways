@@ -22,6 +22,10 @@ export class StationsService {
     return station;
   }
 
+  getStationByName(title: string) {
+    return this.stationsRepository.findOne({ where: { title } });
+  }
+
   async createStation(station: CreateStationDto): Promise<Station> {
     const newStation = this.stationsRepository.create(station);
     await this.stationsRepository.save(newStation);

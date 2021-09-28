@@ -25,8 +25,8 @@ export class RoutesController {
   }
 
   @Post()
-  createRoute(@Body() route: CreateRouteDto) {
-    return this.routesService.createRoute(route);
+  createRoute(@Body() createRouteData: CreateRouteDto) {
+    return this.routesService.createRoute(createRouteData);
   }
 
   @Delete('/:id')

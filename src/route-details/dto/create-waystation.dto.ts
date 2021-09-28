@@ -1,7 +1,5 @@
-import { Station } from 'src/stations/stations.entity';
-
 export class CreateWayStationDto {
-  wayStation: Station;
+  stationTitle: string;
   stationOrder: number;
   time: Date;
 }

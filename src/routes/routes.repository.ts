@@ -3,8 +3,8 @@ import { Route } from './routes.entity';
 
 @EntityRepository(Route)
 export class RoutesRepository extends Repository<Route> {
-  findByStation(title: string): Promise<Route[]> {
-    return this.createQueryBuilder('route')
+  async findByStation(title: string): Promise<Route[]> {
+    const ids = await this.createQueryBuilder('route')
       .leftJoinAndSelect(
         'station',
         'station',
@@ -14,5 +14,9 @@ export class RoutesRepository extends Repository<Route> {
         title: `%${title}%`,
       })
       .getMany();
+
+    return this.findByIds(ids, {
+      relations: ['departurePoint', 'arrivalPoint'],
+    });
   }
 }
