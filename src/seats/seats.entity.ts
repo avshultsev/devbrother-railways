@@ -1,6 +1,7 @@
 import { Carriage } from 'src/carriages/carriages.entity';
-import { Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
+@Entity()
 export class Seat {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -7,13 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-
-enum CarriageType {
-  SV = 'SV',
-  COMPARTMENT = 'COMPARTMENT',
-  ECONOM = 'ECONOM',
-  SITTING = 'SITTING',
-}
+import { CarriageType } from './carriage-type.enum';
 
 @Entity()
 export class Carriage {

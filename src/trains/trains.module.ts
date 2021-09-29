@@ -10,5 +10,6 @@ import { TrainsService } from './trains.service';
   imports: [UsersModule, RoutesModule, TypeOrmModule.forFeature([Train])],
   controllers: [TrainsController],
   providers: [TrainsService],
+  exports: [TrainsService],
 })
 export class TrainsModule {}

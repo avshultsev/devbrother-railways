@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RoutesService } from 'src/routes/routes.service';
 import { UsersService } from 'src/users/users.service';
@@ -15,24 +15,36 @@ export class TrainsService {
     private routesService: RoutesService,
   ) {}
 
+  async getTrainByNumber(trainNumber: number) {
+    const train = await this.trainsRepository.findOne({
+      where: { number: trainNumber },
+    });
+    if (!train) throw new NotFoundException(`Train #${trainNumber} not found!`);
+    return train;
+  }
+
   async addTrain(trainData: AddTrainDto) {
     const promises: Promise<any>[] = [
       trainData.lead,
       trainData.machenist,
       trainData.machenistAssistant,
-    ].map((email: string) => this.userService.getByEmail(email));
+    ].map(this.userService.getByEmail);
     promises.push(this.routesService.getRouteById(trainData.route));
-    const [lead, machenist, machenistAssistant, route] = await Promise.all(
-      promises,
-    );
-    const newTrain = this.trainsRepository.create({
-      ...trainData,
-      lead,
-      machenist,
-      machenistAssistant,
-      route,
-    });
-    await this.trainsRepository.save(newTrain);
-    return newTrain;
+    try {
+      const [lead, machenist, machenistAssistant, route] = await Promise.all(
+        promises,
+      );
+      const newTrain = this.trainsRepository.create({
+        ...trainData,
+        lead,
+        machenist,
+        machenistAssistant,
+        route,
+      });
+      await this.trainsRepository.save(newTrain);
+      return newTrain;
+    } catch (err) {
+      throw err;
+    }
   }
 }
