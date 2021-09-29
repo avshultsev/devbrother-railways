@@ -7,6 +7,9 @@ import { RouteDetailsModule } from './route-details/route-details.module';
 import { RoutesModule } from './routes/routes.module';
 import { StationsModule } from './stations/stations.module';
 import { UsersModule } from './users/users.module';
+import { TrainsModule } from './trains/trains.module';
+import { CarriagesModule } from './carriages/carriages.module';
+import { SeatsModule } from './seats/seats.module';
 
 @Module({
   imports: [
@@ -25,6 +28,9 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     RoutesModule,
     RouteDetailsModule,
+    TrainsModule,
+    CarriagesModule,
+    SeatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
