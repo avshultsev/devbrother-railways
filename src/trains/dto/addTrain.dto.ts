@@ -1,21 +1,4 @@
-export enum TrainType {
-  BRAND = 'BRAND',
-  EXPRESS = 'EXPRESS',
-  PASSENGER = 'PASSENGER',
-}
-
-export enum TrainFrequency {
-  ODD = 'ODD',
-  EVEN = 'EVEN',
-  DAILY = 'DAILY',
-  MON = 'MON',
-  TUE = 'TUE',
-  WED = 'WED',
-  THU = 'THU',
-  FRI = 'FRI',
-  SAT = 'SAT',
-  SUN = 'SUN',
-}
+import { TrainType } from '../train-type.enum';
 
 export class AddTrainDto {
   number: number;

@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { TrainsModule } from './trains/trains.module';
 import { CarriagesModule } from './carriages/carriages.module';
 import { SeatsModule } from './seats/seats.module';
+import { FrequenciesModule } from './frequencies/frequencies.module';
+import { TrainFrequenciesModule } from './train-frequencies/train-frequencies.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { SeatsModule } from './seats/seats.module';
     TrainsModule,
     CarriagesModule,
     SeatsModule,
+    FrequenciesModule,
+    TrainFrequenciesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

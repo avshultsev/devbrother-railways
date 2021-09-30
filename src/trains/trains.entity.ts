@@ -9,7 +9,7 @@ import {
   OneToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { TrainFrequency, TrainType } from './dto/addTrain.dto';
+import { TrainType } from './train-type.enum';
 
 @Entity()
 export class Train {
