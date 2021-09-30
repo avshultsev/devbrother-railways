@@ -3,6 +3,7 @@ import { User } from 'src/users/user.entity';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -18,14 +19,17 @@ export class Carriage {
   number: number;
 
   @ManyToOne(() => Train, { eager: true })
+  @JoinColumn()
   train: Train;
 
   @Column()
   type: CarriageType;
 
   @OneToOne(() => User)
+  @JoinColumn()
   conductor1: User;
 
   @OneToOne(() => User)
+  @JoinColumn()
   conductor2: User;
 }

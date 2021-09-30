@@ -28,7 +28,7 @@ export class TrainsService {
       trainData.lead,
       trainData.machenist,
       trainData.machenistAssistant,
-    ].map(this.userService.getByEmail);
+    ].map(this.userService.getByEmail.bind(this.userService));
     promises.push(this.routesService.getRouteById(trainData.route));
     try {
       const [lead, machenist, machenistAssistant, route] = await Promise.all(

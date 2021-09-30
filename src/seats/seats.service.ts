@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CarriagesService } from 'src/carriages/carriages.service';
 import { Repository } from 'typeorm';
-import { AddSeatDto } from './dto/add-seat.dto';
 import { Seat } from './seats.entity';
 
 @Injectable()
@@ -29,14 +28,18 @@ export class SeatsService {
     });
   }
 
-  async addSeat(payload: AddSeatDto) {
+  async addSeat(
+    trainNumber: number,
+    carriageNumber: number,
+    seatNumber: number,
+  ) {
     const carriage = await this.carriageService.getCarriage(
-      payload.trainNumber,
-      payload.carriageNumber,
+      trainNumber,
+      carriageNumber,
     );
     const newSeat = this.seatsRepository.create({
       carriage,
-      number: payload.seatNumber,
+      number: seatNumber,
     });
     await this.seatsRepository.save(newSeat);
     return newSeat;

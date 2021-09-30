@@ -1,5 +1,11 @@
 import { Carriage } from 'src/carriages/carriages.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Seat {
@@ -7,6 +13,7 @@ export class Seat {
   id: string;
 
   @ManyToOne(() => Carriage, { eager: true })
+  @JoinColumn()
   carriage: Carriage;
 
   @Column()

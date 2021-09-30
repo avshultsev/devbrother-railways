@@ -34,7 +34,7 @@ export class CarriagesService {
     const promises: Promise<any>[] = [
       carriageData.conductor1,
       carriageData.conductor2,
-    ].map(this.userService.getByEmail);
+    ].map(this.userService.getByEmail.bind(this.userService));
     promises.push(this.trainsService.getTrainByNumber(train));
     try {
       const [conductor1, conductor2, train] = await Promise.all(promises);
