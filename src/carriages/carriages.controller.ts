@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -13,10 +14,10 @@ import { AddCarriageDto } from './dto/add-carriage.dto';
 export class CarriagesController {
   constructor(private carriageService: CarriagesService) {}
 
-  @Get()
+  @Get('/:carriageNumber')
   getCarriage(
     @Query('trainNumber', ParseIntPipe) trainNumber: number,
-    @Query('carriageNumber', ParseIntPipe) carriageNumber: number,
+    @Param('carriageNumber', ParseIntPipe) carriageNumber: number,
   ) {
     return this.carriageService.getCarriage(trainNumber, carriageNumber);
   }

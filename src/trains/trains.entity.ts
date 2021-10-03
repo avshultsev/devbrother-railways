@@ -1,4 +1,3 @@
-import { IsEnum } from 'class-validator';
 import { Route } from 'src/routes/routes.entity';
 import { User } from 'src/users/user.entity';
 import {
@@ -17,7 +16,6 @@ export class Train {
   number: number;
 
   @Column()
-  @IsEnum(TrainType)
   type: TrainType;
 
   @ManyToOne(() => Route, { eager: true })

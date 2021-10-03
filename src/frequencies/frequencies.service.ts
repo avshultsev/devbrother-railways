@@ -14,4 +14,10 @@ export class FrequenciesService {
   getFrequency(name: TrainFrequencyEnum) {
     return this.frequencyRepository.findOne({ where: { name } });
   }
+
+  async addFrequency(name: TrainFrequencyEnum) {
+    const newFreq = this.frequencyRepository.create({ name });
+    await this.frequencyRepository.save(newFreq);
+    return newFreq;
+  }
 }

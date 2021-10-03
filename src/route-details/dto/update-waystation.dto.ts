@@ -1,5 +1,15 @@
+import { IsNotEmpty, IsOptional } from 'class-validator';
+
 export class UpdateWayStationDto {
+  @IsOptional()
+  @IsNotEmpty()
   stationOrder?: number;
+
+  @IsOptional()
+  @IsNotEmpty()
   wayStation?: string;
-  time?: Date;
+
+  @IsOptional()
+  @IsNotEmpty()
+  time?: number;
 }

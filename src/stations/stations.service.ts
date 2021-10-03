@@ -22,8 +22,11 @@ export class StationsService {
     return station;
   }
 
-  getStationByName(title: string) {
-    return this.stationsRepository.findOne({ where: { title } });
+  async getStationByName(title: string) {
+    const station = await this.stationsRepository.findOne({ where: { title } });
+    if (!station)
+      throw new NotFoundException(`Station ${title} does not exist!`);
+    return station;
   }
 
   async createStation(station: CreateStationDto): Promise<Station> {

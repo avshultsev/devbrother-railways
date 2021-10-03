@@ -23,12 +23,26 @@ export class RouteDetailsController {
     return this.routeDetailsService.getWayStations(route);
   }
 
-  @Post('/:id')
+  @Get('/test')
+  getWayStationsOnOneRoute(
+    @Query('start') start: string,
+    @Query('end') end: string,
+  ) {
+    return this.routeDetailsService.getWayStationsOnOneRoute(start, end);
+  }
+
+  @Post('/:route')
   addWayStation(
-    @Param('id') id: Route,
+    @Param('route') route: Route,
+    @Body('stationOrder', ParseIntPipe) stationOrder: number,
+    @Body('time', ParseIntPipe) time: number,
     @Body() wayStationData: CreateWayStationDto,
   ) {
-    return this.routeDetailsService.addWayStation(id, wayStationData);
+    return this.routeDetailsService.addWayStation(route, {
+      ...wayStationData,
+      stationOrder,
+      time,
+    });
   }
 
   @Patch('/:route/stationOrder/:stationOrder')

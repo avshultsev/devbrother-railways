@@ -25,6 +25,36 @@ export class RouteDetailsService {
     return this.routeDetailsRepository.findRouteByWayStation(stationTitle);
   }
 
+  async getWayStationsOnOneRoute(start: string, end: string) {
+    const { getStationByName } = this.stationService;
+    const toPromise: typeof getStationByName = getStationByName.bind(
+      this.stationService,
+    );
+    const promises = [start, end].map(toPromise);
+    const [departure, arrival] = await Promise.all(promises);
+    const results = await this.routeDetailsRepository.findWayStationsOnOneRoute(
+      departure,
+      arrival,
+    );
+    const routes = {};
+    for (const wayStation of results) {
+      const { routeId, wayStationId: id, stationOrder } = wayStation;
+      const key = id === departure.id ? 'departure' : 'arrival';
+      const title = id === departure.id ? departure.title : arrival.title;
+      routes[routeId] = routes[routeId]
+        ? { ...routes[routeId], [key]: { title, stationOrder } }
+        : { [key]: { title, stationOrder } };
+
+      if (
+        routes[routeId]?.departure?.stationOrder >
+        routes[routeId]?.arrival?.stationOrder
+      ) {
+        delete routes[routeId];
+      }
+    }
+    return routes;
+  }
+
   async addWayStation(
     route: Route,
     wayStationData: CreateWayStationDto,
@@ -37,7 +67,7 @@ export class RouteDetailsService {
       route,
       stationOrder,
       wayStation,
-      time,
+      timeOffset: time,
     });
     await this.routeDetailsRepository.save(newRouteDetail);
     return newRouteDetail;

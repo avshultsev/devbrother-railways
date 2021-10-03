@@ -16,9 +16,8 @@ export class TrainFrequenciesService {
   ) {}
 
   async getFrequenciesByTrainNumber(trainNumber: number) {
-    const train = await this.trainsService.getTrainByNumber(trainNumber);
     return this.trainFrequencyRepository.find({
-      where: { train },
+      where: { train: trainNumber },
     });
   }
 
@@ -26,13 +25,9 @@ export class TrainFrequenciesService {
     trainNumber: number,
     frequencyName: TrainFrequencyEnum,
   ) {
-    const promises: Promise<any>[] = [
-      this.trainsService.getTrainByNumber(trainNumber),
-      this.frequenciesService.getFrequency(frequencyName),
-    ];
-    const [train, frequency] = await Promise.all(promises);
+    const frequency = await this.frequenciesService.getFrequency(frequencyName);
     const newTrainFrequency = this.trainFrequencyRepository.create({
-      train,
+      train: trainNumber,
       frequency,
     });
     await this.trainFrequencyRepository.save(newTrainFrequency);

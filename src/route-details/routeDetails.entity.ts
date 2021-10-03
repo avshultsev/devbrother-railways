@@ -24,6 +24,6 @@ export class RouteDetail {
   @Column()
   stationOrder: number;
 
-  @Column({ type: 'time without time zone' })
-  time: Date;
+  @Column() // how much minutes does it take to get to Station from Route.departurePoint
+  timeOffset: number;
 }

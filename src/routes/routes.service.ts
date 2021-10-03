@@ -21,12 +21,20 @@ export class RoutesService {
     return this.routesRepository.findOne(id);
   }
 
-  async getRoutesByStation(stationTitle: string): Promise<Route[]> {
-    const [wayStationRoutes, edgeStationRoutes] = await Promise.all([
-      this.routeDetailsService.getRoutesByWayStation(stationTitle),
-      this.routesRepository.findByStation(stationTitle),
-    ]);
-    return [...wayStationRoutes, ...edgeStationRoutes];
+  async getRoutesByStations(start: string, end: string): Promise<Route[]> {
+    const { getStationByName } = this.stationService;
+    const toPromise: typeof getStationByName = getStationByName.bind(
+      this.stationService,
+    );
+    const promises = [start, end].map(toPromise);
+    const [departurePoint, arrivalPoint] = await Promise.all(promises);
+    return this.routesRepository.find({
+      where: { departurePoint, arrivalPoint },
+    });
+  }
+
+  findEdgeAndWayStations(start: string, end: string) {
+    return this.routesRepository.findEdgeStationWithWayStation(start, end);
   }
 
   async createRoute(createRouteData: CreateRouteDto): Promise<Route> {

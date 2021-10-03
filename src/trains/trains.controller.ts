@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -13,9 +14,17 @@ import { TrainsService } from './trains.service';
 export class TrainsController {
   constructor(private trainsService: TrainsService) {}
 
-  @Get('')
-  getTrain(@Query('trainNumber', ParseIntPipe) trainNumber: number) {
+  @Get('/:trainNumber')
+  getTrainByNumber(@Param('trainNumber', ParseIntPipe) trainNumber: number) {
     return this.trainsService.getTrainByNumber(trainNumber);
+  }
+
+  @Get()
+  getTrainsByStations(
+    @Query('departure') departure: string,
+    @Query('arrival') arrival: string,
+  ) {
+    return this.trainsService.getTrainsByStations(departure, arrival);
   }
 
   @Post()

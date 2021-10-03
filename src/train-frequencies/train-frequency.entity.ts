@@ -1,9 +1,8 @@
 import { Frequency } from 'src/frequencies/frequency.entity';
-import { Train } from 'src/trains/trains.entity';
 import {
+  Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -13,9 +12,8 @@ export class TrainFrequency {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToMany(() => Train)
-  @JoinColumn()
-  train: Train;
+  @Column()
+  train: number;
 
   @ManyToOne(() => Frequency, { eager: true })
   @JoinColumn()

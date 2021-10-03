@@ -1,5 +1,14 @@
+import { IsNotEmpty, IsNumber } from 'class-validator';
+
 export class CreateWayStationDto {
+  @IsNotEmpty()
   stationTitle: string;
+
+  @IsNotEmpty()
+  @IsNumber()
   stationOrder: number;
-  time: Date;
+
+  @IsNotEmpty()
+  @IsNumber()
+  time: number;
 }

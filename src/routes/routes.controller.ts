@@ -15,8 +15,16 @@ export class RoutesController {
   constructor(private routesService: RoutesService) {}
 
   @Get()
-  getRoutesByStation(@Query('station') stationTitle: string) {
-    return this.routesService.getRoutesByStation(stationTitle);
+  getRoutesByStations(
+    @Query('start') start: string,
+    @Query('end') end: string,
+  ) {
+    return this.routesService.getRoutesByStations(start, end);
+  }
+
+  @Get('/test')
+  getMixedStations(@Query('start') start: string, @Query('end') end: string) {
+    return this.routesService.findEdgeAndWayStations(start, end);
   }
 
   @Get('/:id')
