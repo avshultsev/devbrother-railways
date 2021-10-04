@@ -21,20 +21,26 @@ export class RoutesService {
     return this.routesRepository.findOne(id);
   }
 
-  async getRoutesByStations(start: string, end: string): Promise<Route[]> {
-    const { getStationByName } = this.stationService;
-    const toPromise: typeof getStationByName = getStationByName.bind(
-      this.stationService,
-    );
-    const promises = [start, end].map(toPromise);
-    const [departurePoint, arrivalPoint] = await Promise.all(promises);
-    return this.routesRepository.find({
-      where: { departurePoint, arrivalPoint },
-    });
+  async getRoutesByStations(start: string, end: string): Promise<string[]> {
+    const edge = this.findByEdgeStations(start, end);
+    const mixed = this.findByMixedStations(start, end);
+    const way = this.routeDetailsService.getRoutesByWayStations(start, end);
+    const routes = [edge, mixed, way];
+    const [byEdge, byMixed, byWay] = await Promise.all(routes);
+    return [...byEdge, ...byMixed, ...byWay];
   }
 
-  findEdgeAndWayStations(start: string, end: string) {
-    return this.routesRepository.findEdgeStationWithWayStation(start, end);
+  private async findByMixedStations(
+    start: string,
+    end: string,
+  ): Promise<string[]> {
+    const mixed = await this.routesRepository.findByMixedStations(start, end);
+    return mixed.map((e) => e.route_id);
+  }
+
+  private async findByEdgeStations(start: string, end: string) {
+    const edge = await this.routesRepository.findByEdgeStations(start, end);
+    return edge.map((e) => e.id);
   }
 
   async createRoute(createRouteData: CreateRouteDto): Promise<Route> {

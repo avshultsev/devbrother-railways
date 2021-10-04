@@ -45,7 +45,7 @@ export class RouteDetailsRepository extends Repository<RouteDetail> {
       .where('station.title = :startTitle', { startTitle })
       .orWhere('station.title = :endTitle', { endTitle });
 
-    const result = await this.createQueryBuilder('route_detail')
+    return this.createQueryBuilder('route_detail')
       .select('route_detail."wayStationId"')
       .addSelect('route_detail."stationOrder"')
       .addSelect('route_detail."routeId"')
@@ -54,7 +54,5 @@ export class RouteDetailsRepository extends Repository<RouteDetail> {
       .andWhere('route_detail."wayStationId" IN (' + stations.getQuery() + ')')
       .setParameters(stations.getParameters())
       .getRawMany();
-
-    return result;
   }
 }

@@ -22,11 +22,6 @@ export class RoutesController {
     return this.routesService.getRoutesByStations(start, end);
   }
 
-  @Get('/test')
-  getMixedStations(@Query('start') start: string, @Query('end') end: string) {
-    return this.routesService.findEdgeAndWayStations(start, end);
-  }
-
   @Get('/:id')
   getRouteById(@Param('id') id: string) {
     return this.routesService.getRouteById(id);

@@ -23,14 +23,6 @@ export class RouteDetailsController {
     return this.routeDetailsService.getWayStations(route);
   }
 
-  @Get('/test')
-  getWayStationsOnOneRoute(
-    @Query('start') start: string,
-    @Query('end') end: string,
-  ) {
-    return this.routeDetailsService.getWayStationsOnOneRoute(start, end);
-  }
-
   @Post('/:route')
   addWayStation(
     @Param('route') route: Route,

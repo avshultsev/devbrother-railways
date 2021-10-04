@@ -17,19 +17,22 @@ export class RoutesRepository extends Repository<Route> {
       .getMany();
   }
 
-  findEdgeStationWithWayStation(start: string, end: string) {
-    const getQb = (title: string) => {
-      const prefix = Math.floor(Math.random() * 1000);
-      return this.createQueryBuilder()
-        .select('station.id')
-        .from(Station, 'station')
-        .where(`station.title = :title_${prefix}`, {
-          [`title_${prefix}`]: title,
-        });
-    };
+  private getQb(title: string) {
+    const prefix = Math.floor(Math.random() * 1000);
+    return this.createQueryBuilder()
+      .select('station.id')
+      .from(Station, 'station')
+      .where(`station.title = :title_${prefix}`, {
+        [`title_${prefix}`]: title,
+      });
+  }
 
-    const startQb = getQb(start);
-    const endQb = getQb(end);
+  findByMixedStations(
+    start: string,
+    end: string,
+  ): Promise<{ route_id: string }[]> {
+    const startQb = this.getQb(start);
+    const endQb = this.getQb(end);
 
     return this.createQueryBuilder('route')
       .select('route.id')
@@ -57,5 +60,21 @@ export class RoutesRepository extends Repository<Route> {
       .setParameters(startQb.getParameters())
       .setParameters(endQb.getParameters())
       .getRawMany();
+  }
+
+  async findByEdgeStations(
+    start: string,
+    end: string,
+  ): Promise<{ id: string }[]> {
+    const startQb = this.getQb(start);
+    const endQb = this.getQb(end);
+    return this.createQueryBuilder()
+      .select('route.id')
+      .from(Route, 'route')
+      .where('route."departurePointId" IN (' + startQb.getQuery() + ')')
+      .setParameters(startQb.getParameters())
+      .andWhere('route."arrivalPointId" IN (' + endQb.getQuery() + ')')
+      .setParameters(endQb.getParameters())
+      .getMany();
   }
 }
