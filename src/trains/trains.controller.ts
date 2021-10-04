@@ -27,6 +27,11 @@ export class TrainsController {
     return this.trainsService.getTrainsByStations(departure, arrival);
   }
 
+  @Get('/:stationTitle/timetable')
+  getTrainTimetable(@Param('stationTitle') stationTitle: string) {
+    return this.trainsService.getTrainsForStation(stationTitle);
+  }
+
   @Post()
   addTrain(
     @Body('number', ParseIntPipe) number: number,

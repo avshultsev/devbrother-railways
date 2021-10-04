@@ -48,6 +48,16 @@ export class RoutesService {
     return edge.map((e) => e.id);
   }
 
+  async getStationRoutes(stationTitle: string): Promise<string[]> {
+    const [wayStationRoutes, edgeStationRoutes] = await Promise.all([
+      this.routeDetailsService.getRoutesByWayStation(stationTitle),
+      this.routesRepository.findByStation(stationTitle),
+    ]);
+    const wayStationRouteIds = wayStationRoutes.map((route) => route.id);
+    const edgeStationRouteIds = edgeStationRoutes.map((route) => route.id);
+    return [...wayStationRouteIds, ...edgeStationRouteIds];
+  }
+
   async createRoute(createRouteData: CreateRouteDto): Promise<Route> {
     const promises = Object.values(createRouteData).map(
       (stationTitle: string) =>

@@ -31,6 +31,11 @@ export class TrainsService {
     }
   }
 
+  async getTrainsForStation(stationTitle: string) {
+    const routeIds = await this.routesService.getStationRoutes(stationTitle);
+    return this.trainsRepository.findTrainsByRoutes(routeIds);
+  }
+
   async addTrain(trainData: AddTrainDto) {
     const { getByEmail } = this.userService;
     const toPromise = getByEmail.bind(this.userService);

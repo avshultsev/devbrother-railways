@@ -7,8 +7,7 @@ import { RouteDetail } from './routeDetails.entity';
 export class RouteDetailsRepository extends Repository<RouteDetail> {
   findRouteByWayStation(stationTitle: string): Promise<Route[]> {
     return this.createQueryBuilder()
-      .select('route_detail."routeId"', 'routeID')
-      .distinct(true)
+      .select('route_detail."routeId" AS id')
       .from(RouteDetail, 'route_detail')
       .innerJoin(
         'station',
@@ -16,7 +15,8 @@ export class RouteDetailsRepository extends Repository<RouteDetail> {
         'station.id = route_detail."wayStationId"',
       )
       .where('station.title = :stationTitle', { stationTitle })
-      .execute();
+      .groupBy('route_detail."routeId"')
+      .getRawMany();
   }
 
   async findWayStationsOnOneRoute(
