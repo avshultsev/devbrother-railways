@@ -32,11 +32,13 @@ export class TrainsService {
   }
 
   async addTrain(trainData: AddTrainDto) {
+    const { getByEmail } = this.userService;
+    const toPromise = getByEmail.bind(this.userService);
     const promises: Promise<any>[] = [
       trainData.lead,
       trainData.machenist,
       trainData.machenistAssistant,
-    ].map(this.userService.getByEmail.bind(this.userService));
+    ].map(toPromise);
     promises.push(this.routesService.getRouteById(trainData.route));
     try {
       const [lead, machenist, machenistAssistant, route] = await Promise.all(
