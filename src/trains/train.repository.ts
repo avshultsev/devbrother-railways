@@ -19,12 +19,15 @@ export class TrainRepository extends Repository<Train> {
       .getRawMany();
   }
 
-  findTrainsByStations(departure, arrival) {
-    return this.createQueryBuilder('train')
+  findTrainsByRoutes(routes: string[]): Promise<Train[]> {
+    return this.createQueryBuilder()
       .select('train.number')
-      .addSelect('')
-      .innerJoin('route', 'route.id = train."routeId"')
-      .innerJoin('route_detail', '')
+      .addSelect('train.type')
+      .addSelect('train.departureTime')
+      .from(Train, 'train')
+      .where(
+        'train."routeId" IN (' + routes.map((e) => `'${e}'`).join(', ') + ')',
+      )
       .getMany();
   }
 }

@@ -3,8 +3,6 @@ import { RoutesService } from 'src/routes/routes.service';
 import { UsersService } from 'src/users/users.service';
 import { TrainRepository } from './train.repository';
 import { AddTrainDto } from './dto/addTrain.dto';
-import { StationsService } from 'src/stations/stations.service';
-import { Train } from './trains.entity';
 
 @Injectable()
 export class TrainsService {
@@ -12,7 +10,6 @@ export class TrainsService {
     private trainsRepository: TrainRepository,
     private userService: UsersService,
     private routesService: RoutesService,
-    private stationsService: StationsService,
   ) {}
 
   async getTrainByNumber(trainNumber: number) {
@@ -25,20 +22,10 @@ export class TrainsService {
     return { train: trainNumber, frequencies };
   }
 
-  async getTrainsByStations(
-    startPoint: string,
-    endPoint: string,
-  ): Promise<Train[]> {
-    const { getStationByName } = this.stationsService;
-    const toPromise = getStationByName.bind(this.stationsService);
-    const promises = [startPoint, endPoint].map(toPromise);
+  async getTrainsByStations(start: string, end: string): Promise<any> {
     try {
-      const [departurePoint, arrivalPoint] = await Promise.all(promises);
-      const result = await this.trainsRepository.findTrainsByStations(
-        departurePoint,
-        arrivalPoint,
-      );
-      return result;
+      const routeIDs = await this.routesService.getRoutesByStations(start, end);
+      return this.trainsRepository.findTrainsByRoutes(routeIDs);
     } catch (err) {
       throw err;
     }

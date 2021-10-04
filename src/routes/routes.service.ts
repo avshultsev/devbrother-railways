@@ -25,9 +25,14 @@ export class RoutesService {
     const edge = this.findByEdgeStations(start, end);
     const mixed = this.findByMixedStations(start, end);
     const way = this.routeDetailsService.getRoutesByWayStations(start, end);
-    const routes = [edge, mixed, way];
-    const [byEdge, byMixed, byWay] = await Promise.all(routes);
-    return [...byEdge, ...byMixed, ...byWay];
+    const promises = [edge, mixed, way];
+    const [byEdge, byMixed, byWay] = await Promise.all(promises);
+    const routes = [...byEdge, ...byMixed, ...byWay];
+    if (!routes.length)
+      throw new NotFoundException(
+        `Routes between ${start} and ${end} not found!`,
+      );
+    return routes;
   }
 
   private async findByMixedStations(
