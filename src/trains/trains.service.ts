@@ -33,6 +33,8 @@ export class TrainsService {
 
   async getTrainsForStation(stationTitle: string) {
     const routeIds = await this.routesService.getStationRoutes(stationTitle);
+    if (!routeIds.length)
+      throw new NotFoundException(`Trains for ${stationTitle} not found!`);
     return this.trainsRepository.findTrainsByRoutes(routeIds);
   }
 
