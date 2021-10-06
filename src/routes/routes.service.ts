@@ -53,15 +53,12 @@ export class RoutesService {
       arrival.id,
     );
     return mixed.map((route) => route.id);
-    // const mixed = await this.routesRepository.findByMixedStations(start, end);
-    // return mixed.map((e) => e.route_id);
   }
 
   private async findByEdgeStations(departure: Station, arrival: Station) {
     const routes = await this.routesRepository.find({
       where: { departurePoint: departure, arrivalPoint: arrival },
     });
-    // const edge = await this.routesRepository.findByEdgeStations(start, end);
     return routes.map((route) => route.id);
   }
 
