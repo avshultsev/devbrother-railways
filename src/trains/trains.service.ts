@@ -13,16 +13,10 @@ export class TrainsService {
   ) {}
 
   async getTrainByNumber(trainNumber: number) {
-    const raw = await this.trainsRepository.findTrainWithFrequencies(
-      trainNumber,
-    );
-    if (!raw.length)
-      throw new NotFoundException(`Train #${trainNumber} not found!`);
-    const frequencies = raw.map(({ frequencyName }) => frequencyName);
-    return { train: trainNumber, frequencies };
+    return this.trainsRepository.find({ where: { number: trainNumber } });
   }
 
-  async getTrainsByStations(start: string, end: string): Promise<any> {
+  async getTrainsByTwoStations(start: string, end: string): Promise<any> {
     try {
       const routeIDs = await this.routesService.getRoutesByStations(start, end);
       return this.trainsRepository.findTrainsByRoutes(routeIDs);
@@ -31,11 +25,13 @@ export class TrainsService {
     }
   }
 
-  async getTrainsForStation(stationTitle: string) {
-    const routeIds = await this.routesService.getStationRoutes(stationTitle);
-    if (!routeIds.length)
+  async getTrainsTimetableForStation(stationTitle: string) {
+    const routeIDs = await this.routesService.getRoutesPassingThroughStation(
+      stationTitle,
+    );
+    if (!routeIDs.length)
       throw new NotFoundException(`Trains for ${stationTitle} not found!`);
-    return this.trainsRepository.findTrainsByRoutes(routeIds);
+    return this.trainsRepository.findTrainsByRoutes(routeIDs);
   }
 
   async addTrain(trainData: AddTrainDto) {

@@ -21,15 +21,15 @@ export class TrainsController {
 
   @Get()
   getTrainsByStations(
-    @Query('departure') departure: string,
-    @Query('arrival') arrival: string,
+    @Query('start') start: string,
+    @Query('end') end: string,
   ) {
-    return this.trainsService.getTrainsByStations(departure, arrival);
+    return this.trainsService.getTrainsByTwoStations(start, end);
   }
 
   @Get('/:stationTitle/timetable')
-  getTrainTimetable(@Param('stationTitle') stationTitle: string) {
-    return this.trainsService.getTrainsForStation(stationTitle);
+  getTrainsTimetableForStation(@Param('stationTitle') stationTitle: string) {
+    return this.trainsService.getTrainsTimetableForStation(stationTitle);
   }
 
   @Post()

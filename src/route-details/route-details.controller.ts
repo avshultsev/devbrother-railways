@@ -19,8 +19,8 @@ export class RouteDetailsController {
   constructor(private routeDetailsService: RouteDetailsService) {}
 
   @Get()
-  getWayStations(@Query('route') route: string) {
-    return this.routeDetailsService.getWayStations(route);
+  getWayStationsByRoute(@Query('route') route: string) {
+    return this.routeDetailsService.getWayStationsByRoute(route);
   }
 
   @Post('/:route')

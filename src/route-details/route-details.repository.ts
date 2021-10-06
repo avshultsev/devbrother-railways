@@ -22,11 +22,10 @@ export class RouteDetailsRepository extends Repository<RouteDetail> {
   async findWayStationsOnOneRoute(
     departure: Station,
     arrival: Station,
-  ): Promise<
-    { wayStationId: string; stationOrder: number; routeId: string }[]
-  > {
-    const { id: startId, title: startTitle } = departure;
-    const { id: endId, title: endTitle } = arrival;
+  ): Promise<{ route: string; wayStation: string; stationOrder: number }[]> {
+    const stationIDs = [departure.id, arrival.id]
+      .map((id) => `'${id}'`)
+      .join(', ');
     const routeDetails = this.createQueryBuilder('route_detail')
       .select('route_detail."routeId"')
       .innerJoin(
@@ -34,25 +33,16 @@ export class RouteDetailsRepository extends Repository<RouteDetail> {
         'station',
         'route_detail."wayStationId" = station.id',
       )
-      .where('station.id = :startId', { startId })
-      .orWhere('station.id = :endId', { endId })
+      .where('station.id IN (' + stationIDs + ')')
       .groupBy('route_detail."routeId"')
       .having('COUNT(*) > 1');
 
-    const stations = this.createQueryBuilder()
-      .select('station.id')
-      .from(Station, 'station')
-      .where('station.title = :startTitle', { startTitle })
-      .orWhere('station.title = :endTitle', { endTitle });
-
     return this.createQueryBuilder('route_detail')
-      .select('route_detail."wayStationId"')
-      .addSelect('route_detail."stationOrder"')
-      .addSelect('route_detail."routeId"')
+      .select('route_detail."wayStationId" AS wayStation')
+      .addSelect('route_detail."stationOrder" AS stationOrder')
+      .addSelect('route_detail."routeId" AS route')
       .where('route_detail."routeId" IN (' + routeDetails.getQuery() + ')')
-      .setParameters(routeDetails.getParameters())
-      .andWhere('route_detail."wayStationId" IN (' + stations.getQuery() + ')')
-      .setParameters(stations.getParameters())
+      .andWhere('route_detail."wayStationId" IN (' + stationIDs + ')')
       .getRawMany();
   }
 }

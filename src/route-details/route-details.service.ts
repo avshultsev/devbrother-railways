@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Route } from 'src/routes/routes.entity';
+import { Station } from 'src/stations/stations.entity';
 import { StationsService } from 'src/stations/stations.service';
 import { CreateWayStationDto } from './dto/create-waystation.dto';
 import { UpdateWayStationDto } from './dto/update-waystation.dto';
@@ -17,21 +18,16 @@ export class RouteDetailsService {
     private stationService: StationsService,
   ) {}
 
-  getWayStations(routeID: string): Promise<RouteDetail[]> {
+  getWayStationsByRoute(routeID: string): Promise<RouteDetail[]> {
     return this.routeDetailsRepository.find({ where: { route: routeID } });
   }
 
-  getRoutesByWayStation(stationTitle: string) {
-    return this.routeDetailsRepository.findRouteByWayStation(stationTitle);
+  async getRoutesForSingleStation(stationTitle: string) {
+    const wayStation = await this.stationService.getStationByName(stationTitle);
+    return this.routeDetailsRepository.find({ where: { wayStation } });
   }
 
-  async getRoutesByWayStations(start: string, end: string) {
-    const { getStationByName } = this.stationService;
-    const toPromise: typeof getStationByName = getStationByName.bind(
-      this.stationService,
-    );
-    const promises = [start, end].map(toPromise);
-    const [departure, arrival] = await Promise.all(promises);
+  async getRoutesByTwoWayStations(departure: Station, arrival: Station) {
     const routeDetails =
       await this.routeDetailsRepository.findWayStationsOnOneRoute(
         departure,
@@ -39,18 +35,14 @@ export class RouteDetailsService {
       );
     const routes = {};
     for (const routeDetail of routeDetails) {
-      const { routeId, wayStationId: id, stationOrder } = routeDetail;
-      const key = id === departure.id ? 'departure' : 'arrival';
-      const title = id === departure.id ? departure.title : arrival.title;
-      routes[routeId] = routes[routeId]
-        ? { ...routes[routeId], [key]: { title, stationOrder } }
-        : { [key]: { title, stationOrder } };
+      const { route, wayStation, stationOrder } = routeDetail;
+      const key = wayStation === departure.id ? 'departure' : 'arrival';
+      routes[route] = routes[route]
+        ? { ...routes[route], [key]: stationOrder }
+        : { [key]: stationOrder };
 
-      if (
-        routes[routeId]?.departure?.stationOrder >
-        routes[routeId]?.arrival?.stationOrder
-      ) {
-        delete routes[routeId];
+      if (routes[route]?.departure > routes[route]?.arrival) {
+        delete routes[route];
       }
     }
     return Object.keys(routes);

@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { RouteDetailsService } from 'src/route-details/route-details.service';
+import { Station } from 'src/stations/stations.entity';
 import { StationsService } from 'src/stations/stations.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { Route } from './routes.entity';
@@ -22,38 +23,56 @@ export class RoutesService {
   }
 
   async getRoutesByStations(start: string, end: string): Promise<string[]> {
-    const edge = this.findByEdgeStations(start, end);
-    const mixed = this.findByMixedStations(start, end);
-    const way = this.routeDetailsService.getRoutesByWayStations(start, end);
-    const promises = [edge, mixed, way];
-    const [byEdge, byMixed, byWay] = await Promise.all(promises);
-    const routes = [...byEdge, ...byMixed, ...byWay];
-    if (!routes.length)
-      throw new NotFoundException(
-        `Routes between ${start} and ${end} not found!`,
+    const stations = [start, end].map((title) =>
+      this.stationService.getStationByName(title),
+    );
+    try {
+      const [departure, arrival] = await Promise.all(stations);
+      const edge = this.findByEdgeStations(departure, arrival);
+      const mixed = this.findByMixedStations(departure, arrival);
+      const way = this.routeDetailsService.getRoutesByTwoWayStations(
+        departure,
+        arrival,
       );
-    return routes;
+      const promises = [edge, mixed, way];
+      const [byEdge, byMixed, byWay] = await Promise.all(promises);
+      const routes = [...byEdge, ...byMixed, ...byWay];
+      if (!routes.length)
+        throw new NotFoundException(
+          `Routes between ${start} and ${end} not found!`,
+        );
+      return routes;
+    } catch (err) {
+      throw err;
+    }
   }
 
-  private async findByMixedStations(
-    start: string,
-    end: string,
+  private async findByMixedStations(departure: Station, arrival: Station) {
+    const mixed = await this.routesRepository.findByMixedStations(
+      departure.id,
+      arrival.id,
+    );
+    return mixed.map((route) => route.id);
+    // const mixed = await this.routesRepository.findByMixedStations(start, end);
+    // return mixed.map((e) => e.route_id);
+  }
+
+  private async findByEdgeStations(departure: Station, arrival: Station) {
+    const routes = await this.routesRepository.find({
+      where: { departurePoint: departure, arrivalPoint: arrival },
+    });
+    // const edge = await this.routesRepository.findByEdgeStations(start, end);
+    return routes.map((route) => route.id);
+  }
+
+  async getRoutesPassingThroughStation(
+    stationTitle: string,
   ): Promise<string[]> {
-    const mixed = await this.routesRepository.findByMixedStations(start, end);
-    return mixed.map((e) => e.route_id);
-  }
-
-  private async findByEdgeStations(start: string, end: string) {
-    const edge = await this.routesRepository.findByEdgeStations(start, end);
-    return edge.map((e) => e.id);
-  }
-
-  async getStationRoutes(stationTitle: string): Promise<string[]> {
     const [wayStationRoutes, edgeStationRoutes] = await Promise.all([
-      this.routeDetailsService.getRoutesByWayStation(stationTitle),
+      this.routeDetailsService.getRoutesForSingleStation(stationTitle),
       this.routesRepository.findByStation(stationTitle),
     ]);
-    const wayStationRouteIds = wayStationRoutes.map((route) => route.id);
+    const wayStationRouteIds = wayStationRoutes.map(({ route }) => route.id);
     const edgeStationRouteIds = edgeStationRoutes.map((route) => route.id);
     return [...wayStationRouteIds, ...edgeStationRouteIds];
   }
