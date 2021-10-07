@@ -1,16 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
-import { Carriage } from './carriages.entity';
+import { CarriagesRepository } from './carriages.repository';
 import { AddCarriageDto } from './dto/add-carriage.dto';
 
 @Injectable()
 export class CarriagesService {
   constructor(
-    @InjectRepository(Carriage)
-    private carriageRepository: Repository<Carriage>,
+    private carriageRepository: CarriagesRepository,
     private userService: UsersService,
   ) {}
 
@@ -23,6 +20,14 @@ export class CarriagesService {
         `Carriage #${carriageNumber} in train #${trainNumber} not found!`,
       );
     return carriage;
+  }
+
+  getCarriagesByTrain(trainNumber: number) {
+    return this.carriageRepository.find({ where: { train: trainNumber } });
+  }
+
+  getTrainsWithFreeSeats(trainNumbers: number[]) {
+    return this.carriageRepository.findTrainsWithFreeSeats(trainNumbers);
   }
 
   async addCarriage(
