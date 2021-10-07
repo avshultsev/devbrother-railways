@@ -9,5 +9,6 @@ import { TrainFrequency } from './train-frequency.entity';
   imports: [TypeOrmModule.forFeature([TrainFrequency]), FrequenciesModule],
   controllers: [TrainFrequenciesController],
   providers: [TrainFrequenciesService],
+  exports: [TrainFrequenciesService],
 })
 export class TrainFrequenciesModule {}

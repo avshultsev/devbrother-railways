@@ -5,13 +5,13 @@ import { UsersModule } from 'src/users/users.module';
 import { TrainsController } from './trains.controller';
 import { TrainsService } from './trains.service';
 import { TrainRepository } from './train.repository';
-import { StationsModule } from 'src/stations/stations.module';
+import { TrainFrequenciesModule } from 'src/train-frequencies/train-frequencies.module';
 
 @Module({
   imports: [
     UsersModule,
     RoutesModule,
-    StationsModule,
+    TrainFrequenciesModule,
     TypeOrmModule.forFeature([TrainRepository]),
   ],
   controllers: [TrainsController],

@@ -3,6 +3,8 @@ import { RoutesService } from 'src/routes/routes.service';
 import { UsersService } from 'src/users/users.service';
 import { TrainRepository } from './train.repository';
 import { AddTrainDto } from './dto/addTrain.dto';
+import { TrainFrequenciesService } from 'src/train-frequencies/train-frequencies.service';
+import { Train } from './trains.entity';
 
 @Injectable()
 export class TrainsService {
@@ -10,16 +12,23 @@ export class TrainsService {
     private trainsRepository: TrainRepository,
     private userService: UsersService,
     private routesService: RoutesService,
+    private trainFrequenciesService: TrainFrequenciesService,
   ) {}
 
   async getTrainByNumber(trainNumber: number) {
-    return this.trainsRepository.find({ where: { number: trainNumber } });
+    const promises: Promise<any>[] = [
+      this.trainsRepository.findOne(trainNumber),
+      this.trainFrequenciesService.getFrequenciesByTrainNumber(trainNumber),
+    ];
+    const [trainInfo, frequencies] = await Promise.all(promises);
+    return { ...trainInfo, frequencies };
   }
 
   async getTrainsByTwoStations(start: string, end: string): Promise<any> {
     try {
       const routeIDs = await this.routesService.getRoutesByStations(start, end);
-      return this.trainsRepository.findTrainsByRoutes(routeIDs);
+      const trains = await this.trainsRepository.findTrainsByRoutes(routeIDs);
+      return this.getFrequenciesForTrains(trains);
     } catch (err) {
       throw err;
     }
@@ -31,7 +40,16 @@ export class TrainsService {
     );
     if (!routeIDs.length)
       throw new NotFoundException(`Trains for ${stationTitle} not found!`);
-    return this.trainsRepository.findTrainsByRoutes(routeIDs);
+    const trains = await this.trainsRepository.findTrainsByRoutes(routeIDs);
+    return this.getFrequenciesForTrains(trains);
+  }
+
+  private async getFrequenciesForTrains(trains: Train[]) {
+    const promises = trains.map((train) =>
+      this.trainFrequenciesService.getFrequenciesByTrainNumber(train.number),
+    );
+    const frequencies = await Promise.all(promises);
+    return trains.map((train, i) => ({ ...train, frequency: frequencies[i] }));
   }
 
   async addTrain(trainData: AddTrainDto) {

@@ -13,10 +13,11 @@ export class TrainFrequenciesService {
     private frequenciesService: FrequenciesService,
   ) {}
 
-  getFrequenciesByTrainNumber(trainNumber: number) {
-    return this.trainFrequencyRepository.find({
+  async getFrequenciesByTrainNumber(trainNumber: number) {
+    const frequencies = await this.trainFrequencyRepository.find({
       where: { train: trainNumber },
     });
+    return frequencies.map((f) => f.frequency.name);
   }
 
   async addTrainFrequency(
