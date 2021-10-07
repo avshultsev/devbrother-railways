@@ -2,9 +2,9 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   ParseIntPipe,
   Post,
+  Query,
 } from '@nestjs/common';
 import { TrainFrequenciesService } from './train-frequencies.service';
 import { TrainFrequencyEnum } from './train-frequency.enum';
@@ -13,21 +13,16 @@ import { TrainFrequencyEnum } from './train-frequency.enum';
 export class TrainFrequenciesController {
   constructor(private trainFrequenciesService: TrainFrequenciesService) {}
 
-  @Get('/:trainNumber')
-  getTrainFrequencies(@Param('trainNumber', ParseIntPipe) trainNumber: number) {
-    return this.trainFrequenciesService.getFrequenciesByTrainNumber(
-      trainNumber,
-    );
+  @Get()
+  getTrainFrequencies(@Query('train', ParseIntPipe) train: number) {
+    return this.trainFrequenciesService.getFrequenciesByTrainNumber(train);
   }
 
-  @Post('/:trainNumber')
+  @Post()
   addTrainFrequency(
-    @Param('trainNumber', ParseIntPipe) trainNumber: number,
+    @Query('train', ParseIntPipe) train: number,
     @Body('frequencyName') frequencyName: TrainFrequencyEnum,
   ) {
-    return this.trainFrequenciesService.addTrainFrequency(
-      trainNumber,
-      frequencyName,
-    );
+    return this.trainFrequenciesService.addTrainFrequency(train, frequencyName);
   }
 }

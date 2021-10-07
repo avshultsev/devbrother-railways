@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TrainFrequencyEnum } from 'src/train-frequencies/train-frequency.enum';
 import { Repository } from 'typeorm';
@@ -11,8 +11,12 @@ export class FrequenciesService {
     private frequencyRepository: Repository<Frequency>,
   ) {}
 
-  getFrequency(name: TrainFrequencyEnum) {
-    return this.frequencyRepository.findOne({ where: { name } });
+  async getFrequency(name: TrainFrequencyEnum) {
+    const frequency = await this.frequencyRepository.findOne({
+      where: { name },
+    });
+    if (!frequency) throw new BadRequestException(`Invalid frequency title!`);
+    return frequency;
   }
 
   async addFrequency(name: TrainFrequencyEnum) {
