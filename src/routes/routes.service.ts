@@ -39,7 +39,7 @@ export class RoutesService {
       const routes = [...byEdge, ...byMixed, ...byWay];
       if (!routes.length)
         throw new NotFoundException(
-          `Routes between ${start} and ${end} not found!`,
+          `Routes from ${start} to ${end} not found!`,
         );
       return routes;
     } catch (err) {

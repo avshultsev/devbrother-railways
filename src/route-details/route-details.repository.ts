@@ -38,8 +38,8 @@ export class RouteDetailsRepository extends Repository<RouteDetail> {
       .having('COUNT(*) > 1');
 
     return this.createQueryBuilder('route_detail')
-      .select('route_detail."wayStationId" AS wayStation')
-      .addSelect('route_detail."stationOrder" AS stationOrder')
+      .select('route_detail."wayStationId" AS "wayStation"')
+      .addSelect('route_detail."stationOrder" AS "stationOrder"')
       .addSelect('route_detail."routeId" AS route')
       .where('route_detail."routeId" IN (' + routeDetails.getQuery() + ')')
       .andWhere('route_detail."wayStationId" IN (' + stationIDs + ')')
