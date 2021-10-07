@@ -1,10 +1,8 @@
-import { Train } from 'src/trains/trains.entity';
 import { User } from 'src/users/user.entity';
 import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -18,9 +16,8 @@ export class Carriage {
   @Column()
   number: number;
 
-  @ManyToOne(() => Train, { eager: true })
-  @JoinColumn()
-  train: Train;
+  @Column()
+  train: number;
 
   @Column()
   type: CarriageType;

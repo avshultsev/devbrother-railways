@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TrainsService } from 'src/trains/trains.service';
+import { User } from 'src/users/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 import { Carriage } from './carriages.entity';
@@ -12,7 +12,6 @@ export class CarriagesService {
     @InjectRepository(Carriage)
     private carriageRepository: Repository<Carriage>,
     private userService: UsersService,
-    private trainsService: TrainsService,
   ) {}
 
   async getCarriage(trainNumber: number, carriageNumber: number) {
@@ -31,13 +30,12 @@ export class CarriagesService {
     carriageNumber: number,
     carriageData: AddCarriageDto,
   ) {
-    const promises: Promise<any>[] = [
+    const promises: Promise<User>[] = [
       carriageData.conductor1,
       carriageData.conductor2,
     ].map(this.userService.getByEmail.bind(this.userService));
-    promises.push(this.trainsService.getTrainByNumber(train));
     try {
-      const [conductor1, conductor2, train] = await Promise.all(promises);
+      const [conductor1, conductor2] = await Promise.all(promises);
       const newCarriage = this.carriageRepository.create({
         ...carriageData,
         number: carriageNumber,
