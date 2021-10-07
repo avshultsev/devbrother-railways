@@ -5,6 +5,7 @@ import { TrainRepository } from './train.repository';
 import { AddTrainDto } from './dto/addTrain.dto';
 import { TrainFrequenciesService } from 'src/train-frequencies/train-frequencies.service';
 import { Train } from './trains.entity';
+import { WeekDays } from './weekdays.enum';
 
 @Injectable()
 export class TrainsService {
@@ -24,24 +25,45 @@ export class TrainsService {
     return { ...trainInfo, frequencies };
   }
 
-  async getTrainsByTwoStations(start: string, end: string): Promise<any> {
-    try {
-      const routeIDs = await this.routesService.getRoutesByStations(start, end);
-      const trains = await this.trainsRepository.findTrainsByRoutes(routeIDs);
-      return this.getFrequenciesForTrains(trains);
-    } catch (err) {
-      throw err;
-    }
+  async getTrainsFilteredByDate(start: string, end: string, date: Date) {
+    const trains = await this.getTrainsByTwoStationsWithFrequencies(start, end);
+    const { isOdd, dayTitle } = this._parseDate(date);
+    const desired = [isOdd ? 'ODD' : 'EVEN', dayTitle, 'DAILY'];
+    return trains.filter((train) =>
+      train.frequency.some(desired.includes, desired),
+    );
   }
 
-  async getTrainsTimetableForStation(stationTitle: string) {
+  private _parseDate(date: Date) {
+    const monthDay = date.getDate();
+    const weekDay = date.getDay();
+    const isOdd = Boolean(monthDay % 2);
+    const dayTitle = WeekDays[weekDay];
+    return { isOdd, dayTitle };
+  }
+
+  async getTrainsByTwoStationsWithFrequencies(start: string, end: string) {
+    const trains = await this.getTrainsByTwoStations(start, end);
+    return this.getFrequenciesForTrains(trains);
+  }
+
+  private async getTrainsByTwoStations(start: string, end: string) {
+    const routeIDs = await this.routesService.getRoutesByStations(start, end);
+    return this.trainsRepository.findTrainsByRoutes(routeIDs);
+  }
+
+  async getTrainsTimetableWithFrequencies(stationTitle: string) {
+    const trains = await this.getTrainsTimetableForStation(stationTitle);
+    return this.getFrequenciesForTrains(trains);
+  }
+
+  private async getTrainsTimetableForStation(stationTitle: string) {
     const routeIDs = await this.routesService.getRoutesPassingThroughStation(
       stationTitle,
     );
     if (!routeIDs.length)
       throw new NotFoundException(`Trains for ${stationTitle} not found!`);
-    const trains = await this.trainsRepository.findTrainsByRoutes(routeIDs);
-    return this.getFrequenciesForTrains(trains);
+    return this.trainsRepository.findTrainsByRoutes(routeIDs);
   }
 
   private async getFrequenciesForTrains(trains: Train[]) {

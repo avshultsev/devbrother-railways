@@ -8,6 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { AddTrainDto } from './dto/addTrain.dto';
+import { DateTransformPipe } from './pipes/date-transform.pipe';
 import { TrainsService } from './trains.service';
 
 @Controller('trains')
@@ -23,13 +24,14 @@ export class TrainsController {
   getTrainsByStations(
     @Query('start') start: string,
     @Query('end') end: string,
+    @Query('date', DateTransformPipe) date: Date,
   ) {
-    return this.trainsService.getTrainsByTwoStations(start, end);
+    return this.trainsService.getTrainsFilteredByDate(start, end, date);
   }
 
   @Get('/:stationTitle/timetable')
   getTrainsTimetableForStation(@Param('stationTitle') stationTitle: string) {
-    return this.trainsService.getTrainsTimetableForStation(stationTitle);
+    return this.trainsService.getTrainsTimetableWithFrequencies(stationTitle);
   }
 
   @Post()
