@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FrequenciesService } from 'src/frequencies/frequencies.service';
 import { Repository } from 'typeorm';
@@ -13,7 +13,7 @@ export class TrainFrequenciesService {
     private frequenciesService: FrequenciesService,
   ) {}
 
-  async getFrequenciesByTrainNumber(trainNumber: number) {
+  getFrequenciesByTrainNumber(trainNumber: number) {
     return this.trainFrequencyRepository.find({
       where: { train: trainNumber },
     });
@@ -36,5 +36,23 @@ export class TrainFrequenciesService {
     } catch (err) {
       throw err;
     }
+  }
+
+  async updateTrainFrequency(train: number, frequencyName: TrainFrequencyEnum) {
+    await this.trainFrequencyRepository.delete({ train });
+    return this.addTrainFrequency(train, frequencyName);
+  }
+
+  async deleteTrainFrequency(train: number, frequencyName: TrainFrequencyEnum) {
+    const frequency = await this.frequenciesService.getFrequency(frequencyName);
+    const { affected } = await this.trainFrequencyRepository.delete({
+      train,
+      frequency,
+    });
+
+    if (!affected)
+      throw new NotFoundException(
+        `Train ${train} with frequency ${frequencyName} not found!`,
+      );
   }
 }
