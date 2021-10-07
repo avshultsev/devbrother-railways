@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Carriage } from 'src/carriages/carriages.entity';
 import { CarriagesService } from 'src/carriages/carriages.service';
 import { Repository } from 'typeorm';
 import { Seat } from './seats.entity';
@@ -26,6 +27,10 @@ export class SeatsService {
     return this.seatsRepository.findOne({
       where: { carriage, number: seatNumber },
     });
+  }
+
+  async getFreeSeats(carriage: Carriage) {
+    return this.seatsRepository.find({ where: { carriage, ticket: null } });
   }
 
   async addSeat(

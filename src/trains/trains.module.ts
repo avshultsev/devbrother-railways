@@ -6,12 +6,16 @@ import { TrainsController } from './trains.controller';
 import { TrainsService } from './trains.service';
 import { TrainRepository } from './train.repository';
 import { TrainFrequenciesModule } from 'src/train-frequencies/train-frequencies.module';
+import { CarriagesModule } from 'src/carriages/carriages.module';
+import { SeatsModule } from 'src/seats/seats.module';
 
 @Module({
   imports: [
     UsersModule,
     RoutesModule,
     TrainFrequenciesModule,
+    CarriagesModule,
+    SeatsModule,
     TypeOrmModule.forFeature([TrainRepository]),
   ],
   controllers: [TrainsController],

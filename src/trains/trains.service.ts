@@ -6,6 +6,8 @@ import { AddTrainDto } from './dto/addTrain.dto';
 import { TrainFrequenciesService } from 'src/train-frequencies/train-frequencies.service';
 import { Train } from './trains.entity';
 import { WeekDays } from './weekdays.enum';
+import { CarriagesService } from 'src/carriages/carriages.service';
+import { SeatsService } from 'src/seats/seats.service';
 
 @Injectable()
 export class TrainsService {
@@ -13,6 +15,8 @@ export class TrainsService {
     private trainsRepository: TrainRepository,
     private userService: UsersService,
     private routesService: RoutesService,
+    private carriagesService: CarriagesService,
+    private seatsService: SeatsService,
     private trainFrequenciesService: TrainFrequenciesService,
   ) {}
 
@@ -25,12 +29,26 @@ export class TrainsService {
     return { ...trainInfo, frequencies };
   }
 
+  async getTrainsFilteredByDateAndFreeSeats(
+    start: string,
+    end: string,
+    date: Date,
+  ) {
+    const trains = await this.getTrainsFilteredByDate(start, end, date);
+    return this.getTrainsFilteredByFreeSeats(trains);
+  }
+
+  async getTrainsFilteredByFreeSeats(trains: Train[]) {
+    const trainNumbers = trains.map((train) => train.number);
+    return this.carriagesService.getTrainsWithFreeSeats(trainNumbers);
+  }
+
   async getTrainsFilteredByDate(start: string, end: string, date: Date) {
     const trains = await this.getTrainsByTwoStationsWithFrequencies(start, end);
     const { isOdd, dayTitle } = this._parseDate(date);
     const desired = [isOdd ? 'ODD' : 'EVEN', dayTitle, 'DAILY'];
     return trains.filter((train) =>
-      train.frequency.some(desired.includes, desired),
+      train.frequency.some((f) => desired.includes(f)),
     );
   }
 

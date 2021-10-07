@@ -26,7 +26,11 @@ export class TrainsController {
     @Query('end') end: string,
     @Query('date', DateTransformPipe) date: Date,
   ) {
-    return this.trainsService.getTrainsFilteredByDate(start, end, date);
+    return this.trainsService.getTrainsFilteredByDateAndFreeSeats(
+      start,
+      end,
+      date,
+    );
   }
 
   @Get('/:stationTitle/timetable')
