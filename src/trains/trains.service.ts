@@ -55,6 +55,10 @@ export class TrainsService {
     );
   }
 
+  getTrainFreeSeats(train: number) {
+    return this.carriagesService.getTrainFreeSeats(train);
+  }
+
   private _parseDate(date: Date) {
     const monthDay = date.getDate();
     const weekDay = date.getDay();

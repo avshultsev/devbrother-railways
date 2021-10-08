@@ -33,6 +33,18 @@ export class CarriagesService {
     return trainObjs.map((obj) => obj.train);
   }
 
+  async getTrainFreeSeats(train: number) {
+    const seatsAndCarriages = await this.carriageRepository.findTrainFreeSeats(
+      train,
+    );
+    const seatsByCarriages = {};
+    for (const { carriage, seat } of seatsAndCarriages) {
+      if (!seatsByCarriages[carriage]) seatsByCarriages[carriage] = [];
+      seatsByCarriages[carriage].push(seat);
+    }
+    return seatsByCarriages;
+  }
+
   async addCarriage(
     train: number,
     carriageNumber: number,

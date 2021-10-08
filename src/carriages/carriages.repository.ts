@@ -14,4 +14,18 @@ export class CarriagesRepository extends Repository<Carriage> {
       .groupBy('carriage.train')
       .getRawMany();
   }
+
+  findTrainFreeSeats(
+    trainNumber: number,
+  ): Promise<{ carriage: number; seat: number }[]> {
+    return this.createQueryBuilder('carriage')
+      .select('carriage.number AS "carriage"')
+      .addSelect('seat.number AS "seat"')
+      .innerJoin('seat', 'seat', 'carriage.id = seat."carriageId"')
+      .where('carriage.train IN (:trainNumber)', { trainNumber })
+      .andWhere('seat.ticket IS NULL')
+      .orderBy('carriage.number', 'ASC')
+      .addOrderBy('seat.number', 'ASC')
+      .getRawMany();
+  }
 }

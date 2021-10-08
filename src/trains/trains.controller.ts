@@ -38,6 +38,11 @@ export class TrainsController {
     return this.trainsService.getTrainsTimetableWithFrequencies(stationTitle);
   }
 
+  @Get('/:trainNumber/seats')
+  getTrainFreeSeats(@Param('trainNumber', ParseIntPipe) trainNumber: number) {
+    return this.trainsService.getTrainFreeSeats(trainNumber);
+  }
+
   @Post()
   addTrain(
     @Body('number', ParseIntPipe) number: number,
