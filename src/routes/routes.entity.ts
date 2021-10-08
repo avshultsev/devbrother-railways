@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Station } from '../stations/stations.entity';
 
 @Entity()
@@ -13,4 +19,7 @@ export class Route {
   @ManyToOne(() => Station, { eager: true })
   @JoinColumn()
   arrivalPoint: Station;
+
+  @Column()
+  travelTime: number;
 }

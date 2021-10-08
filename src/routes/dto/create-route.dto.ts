@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateRouteDto {
   @IsNotEmpty()
@@ -6,4 +6,8 @@ export class CreateRouteDto {
 
   @IsNotEmpty()
   arrivalPoint: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  travelTime: number;
 }

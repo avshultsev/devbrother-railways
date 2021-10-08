@@ -86,9 +86,9 @@ export class RoutesService {
   }
 
   async createRoute(createRouteData: CreateRouteDto): Promise<Route> {
-    const promises = Object.values(createRouteData).map(
-      (stationTitle: string) =>
-        this.stationService.getStationByName(stationTitle),
+    const { departurePoint: dep, arrivalPoint: arr } = createRouteData;
+    const promises = [dep, arr].map((stationTitle: string) =>
+      this.stationService.getStationByName(stationTitle),
     );
     const [departurePoint, arrivalPoint] = await Promise.all(promises);
     if (!departurePoint || !arrivalPoint)
@@ -98,6 +98,7 @@ export class RoutesService {
     const newRoute = this.routesRepository.create({
       departurePoint,
       arrivalPoint,
+      travelTime: createRouteData.travelTime,
     });
     await this.routesRepository.save(newRoute);
     return newRoute;

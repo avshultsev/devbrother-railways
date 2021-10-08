@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Query,
 } from '@nestjs/common';
@@ -28,8 +29,11 @@ export class RoutesController {
   }
 
   @Post()
-  createRoute(@Body() createRouteData: CreateRouteDto) {
-    return this.routesService.createRoute(createRouteData);
+  createRoute(
+    @Body() createRouteData: CreateRouteDto,
+    @Body('travelTime', ParseIntPipe) travelTime: number,
+  ) {
+    return this.routesService.createRoute({ ...createRouteData, travelTime });
   }
 
   @Delete('/:id')

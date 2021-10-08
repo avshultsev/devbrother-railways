@@ -74,16 +74,24 @@ export class TrainsService {
       );
       const departure = {
         departure: routeInfo.departurePoint.title,
-        time: train.departureTime,
+        time: this.stringToDate(train.departureTime.toString()),
       };
       const arrival = {
         arrival: routeInfo.arrivalPoint.title,
-        time: 'NOT STATED',
+        time: this.stringToDate(
+          train.departureTime.toString(),
+          routeInfo.travelTime,
+        ),
       };
       return [departure, ...wayStationsInfo, arrival];
     } catch (err) {
       throw new NotFoundException(`Train #${trainNumber} not found!`);
     }
+  }
+
+  private stringToDate(timeStr: string, timeOffset = 0) {
+    const now = this.dateParser.getNowTime(timeStr);
+    return this.dateParser.getTime(now, timeOffset);
   }
 
   private toWayStations(routeDetails: RouteDetail[], timeStr: string) {
