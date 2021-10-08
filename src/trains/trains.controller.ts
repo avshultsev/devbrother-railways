@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { AddTrainDto } from './dto/addTrain.dto';
 import { DateTransformPipe } from './pipes/date-transform.pipe';
@@ -21,11 +22,11 @@ export class TrainsController {
   }
 
   @Get()
+  @UsePipes(DateTransformPipe)
   getTrainsByStations(
-    @Query('start') start: string,
-    @Query('end') end: string,
-    @Query('date', DateTransformPipe) date: Date,
+    @Query() trainsByStationsInfo: { start: string; end: string; date: Date },
   ) {
+    const { start, end, date } = trainsByStationsInfo;
     return this.trainsService.getTrainsFilteredByDateAndFreeSeats(
       start,
       end,
