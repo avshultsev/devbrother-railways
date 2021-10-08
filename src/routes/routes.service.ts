@@ -74,6 +74,17 @@ export class RoutesService {
     return [...wayStationRouteIds, ...edgeStationRouteIds];
   }
 
+  async getFullRouteInfo(route: Route) {
+    const [routeInfo, routeDetails] = await Promise.all([
+      this.routesRepository.findOne(route),
+      this.routeDetailsService.getRouteDetailsByRoute(route),
+    ]);
+    const routeDetailsSorted = routeDetails.sort(
+      (a, b) => a.stationOrder - b.stationOrder,
+    );
+    return { routeInfo, routeDetails: routeDetailsSorted };
+  }
+
   async createRoute(createRouteData: CreateRouteDto): Promise<Route> {
     const promises = Object.values(createRouteData).map(
       (stationTitle: string) =>

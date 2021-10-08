@@ -8,6 +8,7 @@ import { TrainRepository } from './train.repository';
 import { TrainFrequenciesModule } from 'src/train-frequencies/train-frequencies.module';
 import { CarriagesModule } from 'src/carriages/carriages.module';
 import { SeatsModule } from 'src/seats/seats.module';
+import { DateParser } from './date-parser.service';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { SeatsModule } from 'src/seats/seats.module';
     TypeOrmModule.forFeature([TrainRepository]),
   ],
   controllers: [TrainsController],
-  providers: [TrainsService],
+  providers: [TrainsService, DateParser],
   exports: [TrainsService],
 })
 export class TrainsModule {}

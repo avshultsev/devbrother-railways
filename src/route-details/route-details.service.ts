@@ -18,6 +18,10 @@ export class RouteDetailsService {
     private stationService: StationsService,
   ) {}
 
+  getRouteDetailsByRoute(route: Route) {
+    return this.routeDetailsRepository.find({ where: { route } });
+  }
+
   getWayStationsByRoute(routeID: string): Promise<RouteDetail[]> {
     return this.routeDetailsRepository.find({ where: { route: routeID } });
   }

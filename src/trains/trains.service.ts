@@ -5,7 +5,8 @@ import { TrainRepository } from './train.repository';
 import { AddTrainDto } from './dto/addTrain.dto';
 import { TrainFrequenciesService } from 'src/train-frequencies/train-frequencies.service';
 import { Train } from './trains.entity';
-import { WeekDays } from './weekdays.enum';
+import { RouteDetail } from 'src/route-details/routeDetails.entity';
+import { DateParser } from './date-parser.service';
 import { CarriagesService } from 'src/carriages/carriages.service';
 import { SeatsService } from 'src/seats/seats.service';
 
@@ -16,6 +17,7 @@ export class TrainsService {
     private userService: UsersService,
     private routesService: RoutesService,
     private carriagesService: CarriagesService,
+    private dateParser: DateParser,
     private seatsService: SeatsService,
     private trainFrequenciesService: TrainFrequenciesService,
   ) {}
@@ -48,7 +50,7 @@ export class TrainsService {
 
   async getTrainsFilteredByDate(start: string, end: string, date: Date) {
     const trains = await this.getTrainsByTwoStationsWithFrequencies(start, end);
-    const { isOdd, dayTitle } = this._parseDate(date);
+    const { isOdd, dayTitle } = this.dateParser.parseDate(date);
     const desired = [isOdd ? 'ODD' : 'EVEN', dayTitle, 'DAILY'];
     return trains.filter((train) =>
       train.frequency.some((f) => desired.includes(f)),
@@ -59,12 +61,37 @@ export class TrainsService {
     return this.carriagesService.getTrainFreeSeats(train);
   }
 
-  private _parseDate(date: Date) {
-    const monthDay = date.getDate();
-    const weekDay = date.getDay();
-    const isOdd = Boolean(monthDay % 2);
-    const dayTitle = WeekDays[weekDay];
-    return { isOdd, dayTitle };
+  async getTrainTimetable(trainNumber: number) {
+    try {
+      const train = await this.trainsRepository.findOne({
+        where: { number: trainNumber },
+      });
+      const route = await this.routesService.getFullRouteInfo(train.route);
+      const { routeInfo, routeDetails } = route;
+      const wayStationsInfo = this.toWayStations(
+        routeDetails,
+        train.departureTime.toString(),
+      );
+      const departure = {
+        departure: routeInfo.departurePoint.title,
+        time: train.departureTime,
+      };
+      const arrival = {
+        arrival: routeInfo.arrivalPoint.title,
+        time: 'NOT STATED',
+      };
+      return [departure, ...wayStationsInfo, arrival];
+    } catch (err) {
+      throw new NotFoundException(`Train #${trainNumber} not found!`);
+    }
+  }
+
+  private toWayStations(routeDetails: RouteDetail[], timeStr: string) {
+    const now = this.dateParser.getNowTime(timeStr);
+    return routeDetails.map((routeDetail) => ({
+      station: routeDetail.wayStation.title,
+      time: this.dateParser.getTime(now, routeDetail.timeOffset),
+    }));
   }
 
   async getTrainsByTwoStationsWithFrequencies(start: string, end: string) {
