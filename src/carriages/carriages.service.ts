@@ -26,8 +26,11 @@ export class CarriagesService {
     return this.carriageRepository.find({ where: { train: trainNumber } });
   }
 
-  getTrainsWithFreeSeats(trainNumbers: number[]) {
-    return this.carriageRepository.findTrainsWithFreeSeats(trainNumbers);
+  async getTrainsWithFreeSeats(trainNumbers: number[]) {
+    const trainObjs = await this.carriageRepository.findTrainsWithFreeSeats(
+      trainNumbers,
+    );
+    return trainObjs.map((obj) => obj.train);
   }
 
   async addCarriage(

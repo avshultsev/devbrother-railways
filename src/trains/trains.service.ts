@@ -40,7 +40,10 @@ export class TrainsService {
 
   async getTrainsFilteredByFreeSeats(trains: Train[]) {
     const trainNumbers = trains.map((train) => train.number);
-    return this.carriagesService.getTrainsWithFreeSeats(trainNumbers);
+    const trainsByDate = await this.carriagesService.getTrainsWithFreeSeats(
+      trainNumbers,
+    );
+    return trains.filter((train) => trainsByDate.includes(train.number));
   }
 
   async getTrainsFilteredByDate(start: string, end: string, date: Date) {

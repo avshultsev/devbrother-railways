@@ -5,6 +5,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  UsePipes,
 } from '@nestjs/common';
 import { SeatsService } from './seats.service';
 
@@ -22,10 +23,11 @@ export class SeatsController {
   }
 
   @Post()
+  @UsePipes(ParseIntPipe)
   addSeat(
-    @Query('trainNumber', ParseIntPipe) trainNumber: number,
-    @Query('carriageNumber', ParseIntPipe) carriageNumber: number,
-    @Body('seatNumber', ParseIntPipe) seatNumber: number,
+    @Query('trainNumber') trainNumber: number,
+    @Query('carriageNumber') carriageNumber: number,
+    @Body('seatNumber') seatNumber: number,
   ) {
     return this.seatsService.addSeat(trainNumber, carriageNumber, seatNumber);
   }

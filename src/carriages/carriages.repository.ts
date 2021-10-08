@@ -3,9 +3,11 @@ import { Carriage } from './carriages.entity';
 
 @EntityRepository(Carriage)
 export class CarriagesRepository extends Repository<Carriage> {
-  findTrainsWithFreeSeats(trainNumbers: number[]) {
+  findTrainsWithFreeSeats(
+    trainNumbers: number[],
+  ): Promise<{ train: number }[]> {
     return this.createQueryBuilder('carriage')
-      .select('carriage.train')
+      .select('carriage.train AS "train"')
       .innerJoin('seat', 'seat', 'carriage.id = seat."carriageId"')
       .where('seat.ticket IS NULL')
       .andWhere('carriage.train IN (' + trainNumbers.join(', ') + ')')
