@@ -22,6 +22,7 @@ export class AuthController {
   ) {
     const { user } = req;
     const cookie = this.authService.getCookie(user);
+    console.dir({ user, cookie });
     res.setHeader('Set-Cookie', cookie);
     return user;
   }

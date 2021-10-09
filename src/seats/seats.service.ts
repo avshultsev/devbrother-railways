@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Carriage } from 'src/carriages/carriages.entity';
 import { CarriagesService } from 'src/carriages/carriages.service';
+import { Ticket } from 'src/tickets/ticket.entity';
 import { Repository } from 'typeorm';
 import { Seat } from './seats.entity';
 
@@ -13,7 +14,6 @@ export class SeatsService {
     private carriageService: CarriagesService,
   ) {}
 
-  // refactor this to perform query from repository layer JOINs
   async getSeat(
     trainNumber: number,
     carriageNumber: number,
@@ -48,5 +48,11 @@ export class SeatsService {
     });
     await this.seatsRepository.save(newSeat);
     return newSeat;
+  }
+
+  async updateSeatStatus(seat: Seat, ticket: Ticket) {
+    const { affected } = await this.seatsRepository.update(seat.id, { ticket });
+    if (!affected) throw new NotFoundException(`Seat not found!`);
+    return { ...seat, ticket };
   }
 }

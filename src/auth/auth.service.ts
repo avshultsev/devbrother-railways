@@ -41,6 +41,7 @@ export class AuthService {
       const isCorrect = await bcryptjs.compare(plainPassword, user.password);
       if (!isCorrect)
         throw new BadRequestException('Email or password are not valid!');
+      user.password = '';
       return user;
     } catch (err) {
       throw new BadRequestException('Email or password are not valid!');

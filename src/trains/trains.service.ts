@@ -8,7 +8,6 @@ import { Train } from './trains.entity';
 import { RouteDetail } from 'src/route-details/routeDetails.entity';
 import { DateParser } from './date-parser.service';
 import { CarriagesService } from 'src/carriages/carriages.service';
-import { SeatsService } from 'src/seats/seats.service';
 
 @Injectable()
 export class TrainsService {
@@ -18,7 +17,6 @@ export class TrainsService {
     private routesService: RoutesService,
     private carriagesService: CarriagesService,
     private dateParser: DateParser,
-    private seatsService: SeatsService,
     private trainFrequenciesService: TrainFrequenciesService,
   ) {}
 

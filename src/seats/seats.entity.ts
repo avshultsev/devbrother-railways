@@ -1,9 +1,11 @@
 import { Carriage } from 'src/carriages/carriages.entity';
+import { Ticket } from 'src/tickets/ticket.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -19,6 +21,7 @@ export class Seat {
   @Column()
   number: number;
 
-  @Column({ nullable: true })
-  ticket: string; // temporary string
+  @OneToOne(() => Ticket, (ticket) => ticket.seat, { nullable: true })
+  @JoinColumn()
+  ticket: Ticket;
 }
