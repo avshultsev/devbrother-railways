@@ -8,7 +8,7 @@ import {
 import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { TrainsService } from 'src/trains/trains.service';
-import { CreateTicketDto } from './dto/create-ticket.dto';
+import { CreateTicketDto } from '../dto/create-ticket.dto';
 
 @Injectable()
 export class TicketInterceptor implements NestInterceptor {
