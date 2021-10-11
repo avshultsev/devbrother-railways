@@ -13,7 +13,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/auth/request-with-user.interface';
 import { DateTransformPipe } from 'src/trains/pipes/date-transform.pipe';
 import { CreateTicketDto } from './dto/create-ticket.dto';
-import { TicketInterceptor } from './ticket.interceptor';
+import { TicketInterceptor } from './interceptors/ticket.interceptor';
 import { TicketsService } from './tickets.service';
 
 @Controller('tickets')
