@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { ChangeRoleDto } from './dto/change-role.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.entity';
 
@@ -18,10 +19,25 @@ export class UsersService {
     return user;
   }
 
+  getById(id: string) {
+    return this.userRepository.findOne(id);
+  }
+
   async createUser(user: CreateUserDto): Promise<User> {
     const newUser = this.userRepository.create(user);
     await this.userRepository.save(newUser);
     newUser.password = undefined;
     return newUser;
+  }
+
+  async changeRole(id: string, payload: ChangeRoleDto) {
+    const { role } = payload;
+    const user = await this.getById(id);
+    await this.userRepository.update(user.id, { role });
+  }
+
+  async deleteUser(id: string) {
+    const { affected } = await this.userRepository.delete(id);
+    if (!affected) throw new NotFoundException(`User with id ${id} not found!`);
   }
 }

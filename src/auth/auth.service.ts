@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import { SignUpDto } from './dto/sign-up.dto';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import * as bcryptjs from 'bcryptjs';
 import { PostgresErrorCodes } from './postgres-error.enum';
 import { User } from 'src/users/user.entity';
@@ -19,7 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signUp(signUpData: SignUpDto): Promise<User> {
+  async signUp(signUpData: CreateUserDto): Promise<User> {
     const passwordHash = await bcryptjs.hash(signUpData.password, 10);
     try {
       const user = await this.userService.createUser({
