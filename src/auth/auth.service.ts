@@ -9,7 +9,7 @@ import * as bcryptjs from 'bcryptjs';
 import { PostgresErrorCodes } from './postgres-error.enum';
 import { User } from 'src/users/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { JwtExpires } from './jwt-constants';
+import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from './jwt-payload.interface';
 
 @Injectable()
@@ -17,6 +17,7 @@ export class AuthService {
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   async signUp(signUpData: CreateUserDto): Promise<User> {
@@ -52,12 +53,11 @@ export class AuthService {
     const { id, email } = user;
     const payload: JwtPayload = { id, email };
     const token = this.jwtService.sign(payload);
-    const cookie = `Authentication=${token}; Max-Age=${JwtExpires}; Path=/; HttpOnly`;
-    return cookie;
+    const expiresIn = this.configService.get('JWT_EXPIRATION_TIME');
+    return `Authentication=${token}; Max-Age=${expiresIn}; Path=/; HttpOnly`;
   }
 
   getLogoutCookie() {
-    const logOutCookie = 'Authentication=; Max-Age=0; Path=/; HttpOnly';
-    return logOutCookie;
+    return 'Authentication=; Max-Age=0; Path=/; HttpOnly';
   }
 }

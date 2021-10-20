@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -13,21 +13,26 @@ import { SeatsModule } from './seats/seats.module';
 import { FrequenciesModule } from './frequencies/frequencies.module';
 import { TrainFrequenciesModule } from './train-frequencies/train-frequencies.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { ConfigModule } from '@nestjs/config';
+import { DbModule } from './db/db.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        POSTGRES_HOST: Joi.string().required(),
+        POSTGRES_PORT: Joi.number().required(),
+        POSTGRES_USER: Joi.string().required(),
+        POSTGRES_PASSWORD: Joi.string().required(),
+        POSTGRES_DB: Joi.string().required(),
+        PORT: Joi.number(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION_TIME: Joi.string().required(),
+      }),
+    }),
     AuthModule,
     StationsModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'nest-railways',
-      autoLoadEntities: true,
-      synchronize: true, // should not be set in production, see: https://docs.nestjs.com/techniques/database#typeorm-integration
-    }),
+    DbModule,
     UsersModule,
     RoutesModule,
     RouteDetailsModule,
