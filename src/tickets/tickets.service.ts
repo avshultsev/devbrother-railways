@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SeatsService } from 'src/seats/seats.service';
 import { Seat } from 'src/seats/seats.entity';
@@ -7,6 +11,7 @@ import { Connection, Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { TicketState } from './ticket-state.enum';
 import { Ticket } from './ticket.entity';
+import { TrainsService } from 'src/trains/trains.service';
 
 @Injectable()
 export class TicketsService {
@@ -15,6 +20,7 @@ export class TicketsService {
     private ticketsRepository: Repository<Ticket>,
     private connection: Connection,
     private seatsService: SeatsService,
+    private trainsService: TrainsService,
   ) {}
 
   getAllTickets(passenger: User) {
@@ -22,6 +28,7 @@ export class TicketsService {
   }
 
   async createTicket(payload: CreateTicketDto, user: User) {
+    await this.validateTicket(payload);
     const { train, carriage, seat: seatNumber } = payload;
     const seat = await this.seatsService.getSeat(train, carriage, seatNumber);
     const newTicket = this.ticketsRepository.create({
@@ -50,6 +57,24 @@ export class TicketsService {
       throw new InternalServerErrorException(err);
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  private async validateTicket(payload: CreateTicketDto) {
+    const [trains, seatsAndCarriages] = await Promise.all([
+      this.trainsService.getTrainsFilteredByDate(
+        payload.departureStation,
+        payload.arrivalStation,
+        new Date(payload.date),
+      ),
+      this.trainsService.getTrainFreeSeats(payload.train),
+    ]);
+    const occupiedSeat = !seatsAndCarriages[payload.carriage]?.includes(
+      payload.seat,
+    );
+    const trainObj = trains.find(({ number }) => number === payload.train);
+    if (occupiedSeat || !trainObj) {
+      throw new BadRequestException('Payload is not valid!');
     }
   }
 }
