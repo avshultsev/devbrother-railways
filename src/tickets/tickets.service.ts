@@ -42,6 +42,10 @@ export class TicketsService {
       state: TicketState.BOOKED,
       timestamp: new Date(Date.now()),
     });
+    return this.runSeatAndTicketTransaction(newTicket, seat);
+  }
+
+  private async runSeatAndTicketTransaction(newTicket: Ticket, seat: Seat) {
     const queryRunner = this.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

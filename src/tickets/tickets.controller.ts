@@ -6,7 +6,6 @@ import {
   Req,
   UseGuards,
   UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/auth/request-with-user.interface';
@@ -27,7 +26,7 @@ export class TicketsController {
 
   @Post('/book')
   @UseGuards(JwtAuthGuard)
-  @UsePipes(DateTransformPipe, TransformTicketInfoPipe, ValidationPipe)
+  @UsePipes(DateTransformPipe, TransformTicketInfoPipe)
   bookTicket(@Body() payload: CreateTicketDto, @Req() req: RequestWithUser) {
     return this.ticketsService.createTicket(payload, req.user);
   }
