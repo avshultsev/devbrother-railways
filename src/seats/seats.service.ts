@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Carriage } from 'src/carriages/carriages.entity';
 import { CarriagesService } from 'src/carriages/carriages.service';
 import { Ticket } from 'src/tickets/ticket.entity';
 import { Repository } from 'typeorm';
+import { Capacity } from './capacity.enum';
 import { Seat } from './seats.entity';
 
 @Injectable()
@@ -42,6 +47,14 @@ export class SeatsService {
       trainNumber,
       carriageNumber,
     );
+
+    const capacity = Capacity[carriage.type];
+    const seatsNum = await this.seatsRepository.count({ where: { carriage } });
+    if (seatsNum >= capacity)
+      throw new BadRequestException(
+        'Unable to add more seats to the carriage of this type!',
+      );
+
     const newSeat = this.seatsRepository.create({
       carriage,
       number: seatNumber,
