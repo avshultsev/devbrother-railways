@@ -71,11 +71,11 @@ export class TrainsService {
         train.departureTime.toString(),
       );
       const departure = {
-        departure: routeInfo.departurePoint.title,
+        station: routeInfo.departurePoint.title,
         time: this.stringToDate(train.departureTime.toString()),
       };
       const arrival = {
-        arrival: routeInfo.arrivalPoint.title,
+        station: routeInfo.arrivalPoint.title,
         time: this.stringToDate(
           train.departureTime.toString(),
           routeInfo.travelTime,
@@ -112,7 +112,18 @@ export class TrainsService {
 
   async getTrainsTimetableWithFrequencies(stationTitle: string) {
     const trains = await this.getTrainsTimetableForStation(stationTitle);
-    return this.getFrequenciesForTrains(trains);
+    const trainsWithFreqs = await this.getFrequenciesForTrains(trains);
+    const promises = trainsWithFreqs.map((trainWithFreq) =>
+      this.getTrainTimetable(trainWithFreq.number),
+    );
+    const timetables = await Promise.all(promises);
+    const stations = timetables.map((timetable) =>
+      timetable.find(({ station }) => station === stationTitle),
+    );
+    return trainsWithFreqs.map((trainWithFreq, index) => ({
+      ...trainWithFreq,
+      departureTime: stations[index].time,
+    }));
   }
 
   private async getTrainsTimetableForStation(stationTitle: string) {
