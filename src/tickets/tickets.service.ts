@@ -47,9 +47,9 @@ export class TicketsService {
 
   private async runSeatAndTicketTransaction(newTicket: Ticket, seat: Seat) {
     const queryRunner = this.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     try {
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
       const ticket = await queryRunner.manager.save(newTicket);
       await queryRunner.manager.update(Seat, seat.id, {
         ticket,
