@@ -32,8 +32,8 @@ export class UsersService {
 
   async changeRole(id: string, payload: ChangeRoleDto) {
     const { role } = payload;
-    const user = await this.getById(id);
-    await this.userRepository.update(user.id, { role });
+    const { affected } = await this.userRepository.update(id, { role });
+    if (!affected) throw new NotFoundException(`User with id ${id} not found!`);
   }
 
   async deleteUser(id: string) {
