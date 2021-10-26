@@ -4,12 +4,11 @@ import { Roles } from '../users/roles.enum';
 import { User } from '../users/user.entity';
 import { AuthService } from './auth.service';
 import { Test } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { PostgresErrorCodes } from './postgres-error.enum';
 import { UsersService } from '../users/users.service';
 import { mockedConfigService } from '../utils/mocks/config.service';
 import { mockedJwtService } from '../utils/mocks/jwt.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { PostgresErrorCodes } from './postgres-error.enum';
 import { BadRequestException } from '@nestjs/common';
 
 describe('The Authentication Service', () => {
