@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { RouteDetailsService } from 'src/route-details/route-details.service';
-import { Station } from 'src/stations/stations.entity';
-import { StationsService } from 'src/stations/stations.service';
+import { RouteDetailsService } from '../route-details/route-details.service';
+import { Station } from '../stations/stations.entity';
+import { StationsService } from '../stations/stations.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { Route } from './routes.entity';
 import { RoutesRepository } from './routes.repository';
