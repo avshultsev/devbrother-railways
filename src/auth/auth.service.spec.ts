@@ -10,6 +10,7 @@ import { mockedConfigService } from '../utils/mocks/config.service';
 import { mockedJwtService } from '../utils/mocks/jwt.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { BadRequestException } from '@nestjs/common';
+import * as bcryptjs from 'bcryptjs';
 
 describe('The Authentication Service', () => {
   let authService: AuthService;
@@ -112,14 +113,52 @@ describe('The Authentication Service', () => {
 
   // signIn
   describe('when signing in', () => {
+    let email: string;
+    let plainPassword: string;
+    let passwordHash: string;
+    let user: User;
+
+    beforeEach(() => {
+      email = 'test@test.com';
+      plainPassword = '123456';
+    });
+
     describe('and creds are valid', () => {
-      it('should return a user', () => {
-        // TODO
+      beforeEach(() => {
+        getByEmail.mockImplementation(async (email: string) => {
+          passwordHash = await bcryptjs.hash(plainPassword, 10);
+          user = {
+            email,
+            password: passwordHash,
+            id: '1',
+            role: Roles.PASSENGER,
+          };
+          return user;
+        });
+      });
+
+      it('should return a user', async () => {
+        const fetchedUser = await authService.signIn(email, plainPassword);
+        expect(fetchedUser).toBe(user);
       });
     });
+
     describe('and creds are not valid', () => {
-      it('should throw an error', () => {
-        // TODO
+      beforeEach(() => {
+        plainPassword = 'invalidPassword';
+        user = {
+          email,
+          password: passwordHash,
+          id: '1',
+          role: Roles.PASSENGER,
+        };
+        getByEmail.mockReturnValue(user);
+      });
+
+      it('should throw an error', async () => {
+        await expect(
+          authService.signIn(email, plainPassword),
+        ).rejects.toThrow();
       });
     });
   });
