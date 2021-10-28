@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FrequenciesModule } from 'src/frequencies/frequencies.module';
+import { FrequenciesModule } from '../frequencies/frequencies.module';
 import { TrainFrequenciesController } from './train-frequencies.controller';
 import { TrainFrequenciesService } from './train-frequencies.service';
 import { TrainFrequency } from './train-frequency.entity';

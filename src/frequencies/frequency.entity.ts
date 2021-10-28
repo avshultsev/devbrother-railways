@@ -1,4 +1,4 @@
-import { TrainFrequencyEnum } from 'src/train-frequencies/train-frequency.enum';
+import { TrainFrequencyEnum } from '../train-frequencies/train-frequency.enum';
 import { Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()

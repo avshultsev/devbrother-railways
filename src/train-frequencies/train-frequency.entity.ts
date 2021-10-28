@@ -1,4 +1,4 @@
-import { Frequency } from 'src/frequencies/frequency.entity';
+import { Frequency } from '../frequencies/frequency.entity';
 import {
   Column,
   Entity,

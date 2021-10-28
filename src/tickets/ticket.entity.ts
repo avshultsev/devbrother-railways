@@ -1,5 +1,5 @@
-import { Seat } from 'src/seats/seats.entity';
-import { User } from 'src/users/user.entity';
+import { Seat } from '../seats/seats.entity';
+import { User } from '../users/user.entity';
 import {
   Column,
   Entity,

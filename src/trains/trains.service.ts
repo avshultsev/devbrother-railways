@@ -1,13 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RoutesService } from 'src/routes/routes.service';
-import { UsersService } from 'src/users/users.service';
+import { RoutesService } from '../routes/routes.service';
+import { UsersService } from '../users/users.service';
 import { TrainRepository } from './train.repository';
 import { AddTrainDto } from './dto/addTrain.dto';
-import { TrainFrequenciesService } from 'src/train-frequencies/train-frequencies.service';
+import { TrainFrequenciesService } from '../train-frequencies/train-frequencies.service';
 import { Train } from './trains.entity';
-import { RouteDetail } from 'src/route-details/routeDetails.entity';
+import { RouteDetail } from '../route-details/routeDetails.entity';
 import { DateParser } from './date-parser.service';
-import { CarriagesService } from 'src/carriages/carriages.service';
+import { CarriagesService } from '../carriages/carriages.service';
+import { TrainFrequencyEnum } from '../train-frequencies/train-frequency.enum';
 
 @Injectable()
 export class TrainsService {
@@ -21,7 +22,7 @@ export class TrainsService {
   ) {}
 
   async getTrainByNumber(trainNumber: number) {
-    const promises: Promise<any>[] = [
+    const promises: [Promise<Train>, Promise<TrainFrequencyEnum[]>] = [
       this.trainsRepository.findOne(trainNumber),
       this.trainFrequenciesService.getFrequenciesByTrainNumber(trainNumber),
     ];

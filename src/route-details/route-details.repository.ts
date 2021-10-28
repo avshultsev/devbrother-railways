@@ -1,5 +1,5 @@
-import { Route } from 'src/routes/routes.entity';
-import { Station } from 'src/stations/stations.entity';
+import { Route } from '../routes/routes.entity';
+import { Station } from '../stations/stations.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { RouteDetail } from './routeDetails.entity';
 

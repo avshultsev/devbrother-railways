@@ -1,5 +1,5 @@
-import { Carriage } from 'src/carriages/carriages.entity';
-import { Ticket } from 'src/tickets/ticket.entity';
+import { Carriage } from '../carriages/carriages.entity';
+import { Ticket } from '../tickets/ticket.entity';
 import {
   Column,
   Entity,

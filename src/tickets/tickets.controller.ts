@@ -7,9 +7,9 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RequestWithUser } from 'src/auth/request-with-user.interface';
-import { DateTransformPipe } from 'src/trains/pipes/date-transform.pipe';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RequestWithUser } from '../auth/request-with-user.interface';
+import { DateTransformPipe } from '../trains/pipes/date-transform.pipe';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { TransformTicketInfoPipe } from './pipes/transform-info.pipe';
 import { TicketsService } from './tickets.service';

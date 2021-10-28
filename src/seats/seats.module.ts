@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CarriagesModule } from 'src/carriages/carriages.module';
+import { CarriagesModule } from '../carriages/carriages.module';
 import { SeatsController } from './seats.controller';
 import { Seat } from './seats.entity';
 import { SeatsService } from './seats.service';

@@ -4,14 +4,14 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SeatsService } from 'src/seats/seats.service';
-import { Seat } from 'src/seats/seats.entity';
-import { User } from 'src/users/user.entity';
+import { SeatsService } from '../seats/seats.service';
+import { Seat } from '../seats/seats.entity';
+import { User } from '../users/user.entity';
 import { Connection, Repository } from 'typeorm';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { TicketState } from './ticket-state.enum';
 import { Ticket } from './ticket.entity';
-import { TrainsService } from 'src/trains/trains.service';
+import { TrainsService } from '../trains/trains.service';
 
 @Injectable()
 export class TicketsService {

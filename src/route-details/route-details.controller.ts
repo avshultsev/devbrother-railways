@@ -9,7 +9,7 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { Route } from 'src/routes/routes.entity';
+import { Route } from '../routes/routes.entity';
 import { CreateWayStationDto } from './dto/create-waystation.dto';
 import { UpdateWayStationDto } from './dto/update-waystation.dto';
 import { RouteDetailsService } from './route-details.service';

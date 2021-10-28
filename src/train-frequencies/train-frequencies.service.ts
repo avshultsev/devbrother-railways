@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FrequenciesService } from 'src/frequencies/frequencies.service';
+import { FrequenciesService } from '../frequencies/frequencies.service';
 import { Repository } from 'typeorm';
 import { TrainFrequency } from './train-frequency.entity';
 import { TrainFrequencyEnum } from './train-frequency.enum';

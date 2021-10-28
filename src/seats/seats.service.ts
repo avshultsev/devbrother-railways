@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Carriage } from 'src/carriages/carriages.entity';
-import { CarriagesService } from 'src/carriages/carriages.service';
-import { Ticket } from 'src/tickets/ticket.entity';
+import { Carriage } from '../carriages/carriages.entity';
+import { CarriagesService } from '../carriages/carriages.service';
+import { Ticket } from '../tickets/ticket.entity';
 import { Repository } from 'typeorm';
 import { Capacity } from './capacity.enum';
 import { Seat } from './seats.entity';

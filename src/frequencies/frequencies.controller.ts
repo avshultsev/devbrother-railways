@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { TrainFrequencyEnum } from 'src/train-frequencies/train-frequency.enum';
+import { TrainFrequencyEnum } from '../train-frequencies/train-frequency.enum';
 import { FrequenciesService } from './frequencies.service';
 
 @Controller('frequencies')

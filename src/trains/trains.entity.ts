@@ -1,5 +1,5 @@
-import { Route } from 'src/routes/routes.entity';
-import { User } from 'src/users/user.entity';
+import { Route } from '../routes/routes.entity';
+import { User } from '../users/user.entity';
 import {
   Column,
   Entity,
